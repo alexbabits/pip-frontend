@@ -211,7 +211,7 @@ export default function Home() {
     const _leaf = await computeLeaf(nullifierBigInt, poseidon);
 
     // 3. Make a query to Envio to get the leaf index and tree index for this leaf's Deposit event
-    const indices = await fetchIndicesForLeaf(_leaf);
+    const indices = await fetchIndicesForLeaf(_leaf, poolAddress);
     if (!indices) {
       setRequestGasPending(false);
       return;
@@ -420,7 +420,7 @@ export default function Home() {
     const _leaf = await computeLeaf(nullifierBigInt, poseidon);
 
     // 3. Make a query to Envio to get the leaf index and tree index for our Deposit event
-    const indices = await fetchIndicesForLeaf(_leaf);
+    const indices = await fetchIndicesForLeaf(_leaf, poolAddress);
     if (!indices) {
       setWithdrawPending(false);
       return;
@@ -726,12 +726,12 @@ export default function Home() {
   // ROUTES (Envio & Telegram)
   // ==========================
 
-  const fetchIndicesForLeaf = async (_leaf) => {
+  const fetchIndicesForLeaf = async (_leaf, _poolAddress) => {
     try {
       const response = await fetch('/api/envioFetchIndices', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ leaf: _leaf })
+        body: JSON.stringify({ leaf: _leaf, poolAddress: _poolAddress})
       });
   
       const result = await response.json();

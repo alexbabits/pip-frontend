@@ -1,7 +1,7 @@
 export async function POST(request) {
 
     try {
-      const { leaf } = await request.json();
+      const { leaf, poolAddress } = await request.json();
 
       const envioID = process.env.ENVIO_ID;
       
@@ -10,16 +10,16 @@ export async function POST(request) {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           query: `
-            query GetDepositByLeaf($leaf: String!) {
-              Pip_Deposit(where: {leaf: { _eq: $leaf } }) {
+            query {
+              Pip_Deposit(where: {
+                id: {_regex: "^${poolAddress}"},
+                leaf: {_eq: "${leaf}"}
+              }) {
                 _leafIndex
-                _treeIndex
+                _treeIndex  
               }
             }
-          `,
-          variables: {
-            leaf: leaf
-          }
+          `
         }),
       });
   

@@ -167,6 +167,7 @@ export default function Home() {
     }
     setDepositPending(false);
     setFinalizeDepositOverlay(false);
+    setBackupConfirmed(false);
   };
 
 
@@ -1026,7 +1027,7 @@ export default function Home() {
               {/* Display Contract (for debugging) */}
               <div className="text-sm text-black mt-4">
                 {depositDenomination && (
-                  <div>Pool Address (debugging): {poolInfo[depositToken][depositDenomination].address}</div>
+                  <div>Pool Address: {poolInfo[depositToken][depositDenomination].address}</div>
                 )}
               </div>
             </div>
@@ -1085,7 +1086,7 @@ export default function Home() {
                 </div>
 
                 <div className="mb-6 text-black font-bold">
-                  <p className="mb-2">WARNING: Once you execute this deposit, this displayed nullifier permanently disappears.</p>
+                  <p className="mb-2">WARNING: Once you click "Execute Deposit", this displayed nullifier PERMANENTLY disappears. If you don't save your nullifier you LOSE YOUR DEPOSIT.</p>
                 </div>
 
                 {/* Checkbox Confirmation */}

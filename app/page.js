@@ -56,21 +56,22 @@ export default function Home() {
   const FIELD_SIZE = BigInt("21888242871839275222246405745257275088548364400416034343698204186575808495617");
   const ZERO_VALUE = BigInt("11122724670666931127833274645309940916396779779585410472511079044548860378081");
   const GAS = 100000000000000n; // 1e14
-  const TREE_HEIGHT = 4;
+  const TREE_HEIGHT = 12;
   const COMMITMENT_CONSTANT = 69420n;
   const CHAIN_ID = 11155111n; // Sepolia
 
   const poolInfo = {
     ETH: {
-      "1e15": { label: "0.001", address: "0x33891a35faE6D861B5F33a13083b1854eCdFF406" },
-      "2e15": { label: "0.002", address: "0x726664D035D8e3a56d832c39FbB66cB3cd509fF0" }
+      "1e15": { label: "0.001", address: "0xdE5d2e5CF46b7343581a5e17833527c00a54D9BD" },
+      "2e15": { label: "0.002", address: "0xFd6DACA65Cc9dCfEC1C03ccAb3AF60eB836c88b7" }
     },
     LINK: {
-      "1e16": { label: "0.01", address: "0x3399a386F1D449a2580263C3F74417a3D5F4b538" },
-      "2e16": { label: "0.02", address: "0xb4068cd460362f071bE94caE555e9ccb425eeA5f" }
+      "1e16": { label: "0.01", address: "0x33117E9ddf75bf87560B7a7b09393397Aa66f9Eb" },
+      "2e16": { label: "0.02", address: "0x6F819Db7D291A2f270C50E292f582B99fB940dCD" }
     }
   };
   
+  // @audit can just put these in pool info.
   const denominationValues = {
     "1e15": 1000000000000000n,  // 0.001 ETH in wei
     "2e15": 2000000000000000n,  // 0.002 ETH in wei
@@ -78,6 +79,7 @@ export default function Home() {
     "2e16": 20000000000000000n  // 0.02 LINK in wei
   };
 
+  // @audit can just put these in pool info. 'poolAddress' and 'tokenAddress' instead.
   const tokenAddresses = {
     "LINK": "0x779877A7B0D9E8603169DdbD7836e478b4624789"
   };
@@ -233,8 +235,10 @@ export default function Home() {
       return;
     }
 
+    console.log("Attempting to build tree...");
     // 7. Build the specific tree for this pool from all the input leaves.
     const { tree, root } = await buildTree(leaves, poseidon);
+    console.log("Tree built successfully!");
 
     // 8. Calculate pathElements based on the tree.
     const pathElements = getPathElements(tree, leafIndex);
@@ -895,7 +899,7 @@ export default function Home() {
       if (!wallet) return;
 
       if (currentAccount) {
-        toast(`${currentAccount} already connected.\nTo change accounts, you may need to disconnect any current accounts via your wallet's connection settings.`, 10000, "#ffadb7");
+        toast(`Currently connected with ${currentAccount}.\nTo change accounts, you may need to switch or disconnect your account via your wallet's connection settings, depending on your wallet provider.`, 10000, "#ffadb7");
       } else {
         const accounts = await wallet.request({method: 'eth_requestAccounts'});
         setCurrentAccount(accounts[0]);
@@ -904,16 +908,6 @@ export default function Home() {
 		} catch (error) {
 			toast(`Failed to connect account.`, 3000, "#ffadb7");
 		}
-	};
-
-
-	const disconnectWallet = () => {
-    if (currentAccount) {
-      toast(`${currentAccount} disconnected`, 3000, "#ffadb7");
-      setCurrentAccount(null);
-    } else {
-      toast("No account to disconnect.", 3000, "#ffadb7");
-    }
 	};
 
 
@@ -932,9 +926,8 @@ export default function Home() {
         <div className="flex flex-col items-end">
           <div className="flex space-x-4">
             <button onClick={requestWalletConnection} className="p-2 border-2 font-bold text-gray-950 bg-gray-500 rounded-2xl">Connect Wallet</button>
-            <button onClick={disconnectWallet} className="p-2 border-2 font-bold text-gray-950 bg-gray-500 rounded-2xl">Disconnect</button>
           </div>
-          <div className="h-6 mt-1">
+          <div className="h-6 mt-1 pr-4">
             {currentAccount && (<div className="text-gray-300 font-bold">{truncateAddress(currentAccount)}</div>)}
           </div>
         </div>

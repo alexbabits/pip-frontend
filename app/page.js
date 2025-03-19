@@ -71,7 +71,6 @@ export default function Home() {
     }
   };
   
-  // @audit can just put these in pool info.
   const denominationValues = {
     "1e15": 1000000000000000n,  // 0.001 ETH in wei
     "2e15": 2000000000000000n,  // 0.002 ETH in wei
@@ -79,7 +78,6 @@ export default function Home() {
     "2e16": 20000000000000000n  // 0.02 LINK in wei
   };
 
-  // @audit can just put these in pool info. 'poolAddress' and 'tokenAddress' instead.
   const tokenAddresses = {
     "LINK": "0x779877A7B0D9E8603169DdbD7836e478b4624789"
   };
@@ -138,6 +136,7 @@ export default function Home() {
     const denomination = denominationValues[depositDenomination];
     const tokenAddress = tokenAddresses[depositToken];
 
+    setDepositPending(true);
     if (depositToken !== 'ETH') {
       try {
         const currentAllowance = await checkAllowance(tokenAddress, poolAddress, signer);
@@ -147,14 +146,14 @@ export default function Home() {
           ? await approve(poolAddress, tokenAddress, denomination, signer)
           : console.log("Sufficient allowance, skipping ERC20 token approval.");
       } catch (error) {
-        toast(`Failed to approve pool to spend ${depositDenomination} ${depositToken} on user's behalf.`, 6000, "#ffadb7")
+        setDepositPending(false);
+        toast(`Failed to approve pool to spend ${depositDenomination} ${depositToken} on user's behalf.`, 15000, "#ffadb7")
         return;
       }
     }
 
     // 3. Execute the deposit
     let tx;
-    setDepositPending(true);
     try {
       depositToken === 'ETH' 
         ? tx = await pool.deposit(depositLeaf, { value: denomination + GAS})
@@ -163,7 +162,7 @@ export default function Home() {
       const receipt = await tx.wait();
       toast(`Deposit tx validated in block ${receipt.blockNumber}`, 6000, "#99ffb1");
     } catch (error) {
-      toast(`Deposit tx failed`, 3000, "#ffadb7");
+      toast(`Deposit tx rejected`, 3000, "#ffadb7");
       setDepositPending(false);
       return;
     }
@@ -235,10 +234,8 @@ export default function Home() {
       return;
     }
 
-    console.log("Attempting to build tree...");
     // 7. Build the specific tree for this pool from all the input leaves.
     const { tree, root } = await buildTree(leaves, poseidon);
-    console.log("Tree built successfully!");
 
     // 8. Calculate pathElements based on the tree.
     const pathElements = getPathElements(tree, leafIndex);
@@ -1011,7 +1008,7 @@ export default function Home() {
                 <button
                   onClick={initiateDeposit}
                   disabled={!depositDenomination}
-                  className="w-full py-3 border-2 border-gray-900 bg-gray-500 hover:bg-gray-400 text-black rounded-lg text-xl font-bold disabled:cursor-not-allowed disabled:bg-gray-500"
+                  className="button"
                 >
                   Initiate Deposit
                 </button>
@@ -1036,7 +1033,7 @@ export default function Home() {
 
               {/* Ring Loader */}
               {depositPending && (
-                <div className="absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center rounded-lg z-30">
+                <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={300} speedMultiplier={0.5}/>
                   </div>
@@ -1071,7 +1068,7 @@ export default function Home() {
                 <div className="mb-6">
                   <button
                     onClick={() => saveNullifierToFile(generatedNullifier, depositToken, depositDenomination)}
-                    className="w-full py-2 bg-gray-500 border-2 border-gray-900 text-black font-bold text-lg rounded-lg hover:bg-gray-400"
+                    className="button"
                     disabled={depositPending}
                   >
                     Backup Nullifier
@@ -1079,7 +1076,7 @@ export default function Home() {
                 </div>
 
                 <div className="mb-6 text-black font-bold">
-                  <p className="mb-2">WARNING: Once you click "Execute Deposit", this displayed nullifier PERMANENTLY disappears. If you don't save your nullifier you LOSE YOUR DEPOSIT.</p>
+                  <p className="mb-2">WARNING: Once you click "Execute Deposit", this nullifier will PERMANENTLY disappear. If you don't save your nullifier you LOSE YOUR DEPOSIT.</p>
                 </div>
 
                 {/* Checkbox Confirmation */}
@@ -1101,8 +1098,7 @@ export default function Home() {
                 <button
                   onClick={executeDeposit}
                   disabled={!backupConfirmed || depositPending}
-                  className="w-full py-3 bg-gray-500 border-2 border-gray-900 text-black rounded-lg font-bold text-lg 
-                    disabled:cursor-not-allowed hover:bg-gray-400"
+                  className="button"
                 >
                   Execute Deposit
                 </button>
@@ -1118,7 +1114,7 @@ export default function Home() {
 
               {/* Ring Loader */}
               {requestGasPending && (
-                <div className="absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center rounded-lg z-50">
+                <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={300} speedMultiplier={0.5}/>
                   </div>
@@ -1133,7 +1129,7 @@ export default function Home() {
                   value={requestGasNullifier}
                   onChange={(e) => setRequestGasNullifier(e.target.value)}
                   placeholder="ETH-1e15-12345678901234567890..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black"
+                  className="input-field"
                 />
               </div>
               
@@ -1145,7 +1141,7 @@ export default function Home() {
                   value={requestGasRecipient}
                   onChange={(e) => setRequestGasRecipient(e.target.value)}
                   placeholder="0x..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black"
+                  className="input-field"
                 />
               </div>
 
@@ -1172,7 +1168,7 @@ export default function Home() {
                 <button
                   onClick={requestGas}
                   disabled={!requestGasNullifier || !requestGasRecipient || requestGasPending}
-                  className="w-full py-3 border-2 border-gray-900 bg-gray-500 hover:bg-gray-400 text-black rounded-lg text-xl font-bold disabled:cursor-not-allowed disabled:bg-gray-500"
+                  className="button"
                 >
                   Request Gas
                 </button>
@@ -1187,7 +1183,7 @@ export default function Home() {
 
               {/* Ring Loader */}
               {sendGasPending && (
-                <div className="absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center rounded-lg z-50">
+                <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={300} speedMultiplier={0.5}/>
                   </div>
@@ -1202,7 +1198,7 @@ export default function Home() {
                   value={pA}
                   onChange={(e) => set_pA(e.target.value)}
                   placeholder="1234, 5678"
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
 
@@ -1213,7 +1209,7 @@ export default function Home() {
                   value={pB}
                   onChange={(e) => set_pB(e.target.value)}
                   placeholder="6969, 1234, 1337, 9876"
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
 
@@ -1224,7 +1220,7 @@ export default function Home() {
                   value={pC}
                   onChange={(e) => set_pC(e.target.value)}
                   placeholder="9876, 5432"
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
 
@@ -1236,7 +1232,7 @@ export default function Home() {
                   value={sendGasRecipient}
                   onChange={(e) => setSendGasRecipient(e.target.value)}
                   placeholder="0x..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
 
@@ -1247,7 +1243,7 @@ export default function Home() {
                   value={sendGasNullifierHash}
                   onChange={(e) => setSendGasNullifierHash(e.target.value)}
                   placeholder="0x..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
 
@@ -1258,7 +1254,7 @@ export default function Home() {
                   value={sendGasRoot}
                   onChange={(e) => setSendGasRoot(e.target.value)}
                   placeholder="0x..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
               
@@ -1270,7 +1266,7 @@ export default function Home() {
                   value={sendGasPoolAddress}
                   onChange={(e) => setSendGasPoolAddress(e.target.value)}
                   placeholder="0x..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black text-sm"
+                  className="input-field"
                 />
               </div>
 
@@ -1279,7 +1275,7 @@ export default function Home() {
                 <button
                   onClick={sendGas}
                   disabled={!pA || !pB || !pC || !sendGasRecipient || !sendGasNullifierHash || !sendGasRoot || !sendGasPoolAddress || sendGasPending}
-                  className="w-full py-3 border-2 border-gray-900 bg-gray-500 hover:bg-gray-400 text-black rounded-lg text-xl font-bold disabled:cursor-not-allowed disabled:bg-gray-500"
+                  className="button"
                 >
                   Send Gas
                 </button>
@@ -1294,7 +1290,7 @@ export default function Home() {
 
               {/* Ring Loader */}
               {withdrawPending && (
-                <div className="absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center rounded-lg z-50">
+                <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={250} speedMultiplier={0.5}/>
                   </div>
@@ -1309,7 +1305,7 @@ export default function Home() {
                   value={withdrawNullifier}
                   onChange={(e) => setWithdrawNullifier(e.target.value)}
                   placeholder="ETH-1e15-12345678901234567890..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black"
+                  className="input-field"
                 />
               </div>
               
@@ -1321,7 +1317,7 @@ export default function Home() {
                   value={withdrawRecipient}
                   onChange={(e) => setWithdrawRecipient(e.target.value)}
                   placeholder="0x..."
-                  className="w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black"
+                  className="input-field"
                 />
               </div>
               
@@ -1330,7 +1326,7 @@ export default function Home() {
                 <button
                   onClick={withdraw}
                   disabled={!withdrawNullifier || !withdrawRecipient || withdrawPending}
-                  className="w-full py-3 border-2 border-gray-900 bg-gray-500 hover:bg-gray-400 text-black rounded-lg text-xl font-bold disabled:cursor-not-allowed disabled:bg-gray-500"
+                  className="button"
                 >
                   Execute Withdraw
                 </button>

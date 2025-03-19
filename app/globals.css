@@ -25,3 +25,16 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+.input-field {
+  @apply w-full bg-gray-400 border-2 border-gray-900 rounded-lg px-4 py-2 text-black font-bold focus:outline-none focus:ring-2 focus:ring-gray-900;
+}
+
+.ringloader {
+  @apply absolute inset-0 bg-gray-500 flex items-center justify-center rounded-lg z-50;
+}
+
+.button {
+  @apply w-full py-3 border-2 border-gray-900 bg-gray-500 hover:bg-gray-400 text-black rounded-lg text-xl font-bold disabled:cursor-not-allowed disabled:bg-gray-500;
+}

@@ -51,23 +51,30 @@ export default function Home() {
   const [withdrawRecipient, setWithdrawRecipient] = useState('');
   const [withdrawPending, setWithdrawPending] = useState(false);
 
+  // Anonymity Set State
+  const [anonTreeIndex, setAnonTreeIndex] = useState('');
+  const [anonPoolAddress, setAnonPoolAddress] = useState('');
+  const [anonymitySetPending, setAnonymitySetPending] = useState(false);
+  const [anonDeposits, setAnonDeposits] = useState('');
+  const [anonWithdraws, setAnonWithdraws] = useState('');
+  const [anonSet, setAnonSet] = useState('');
 
   // Constants
   const FIELD_SIZE = BigInt("21888242871839275222246405745257275088548364400416034343698204186575808495617");
   const ZERO_VALUE = BigInt("11122724670666931127833274645309940916396779779585410472511079044548860378081");
   const GAS = 100000000000000n; // 1e14
-  const TREE_HEIGHT = 12;
+  const TREE_HEIGHT = 4; // CHANGED FROM 12 TO 4 FOR ANONYMITY SET TESTING
   const COMMITMENT_CONSTANT = 69420n;
   const CHAIN_ID = 11155111n; // Sepolia
 
   const poolInfo = {
     ETH: {
-      "1e15": { label: "0.001", address: "0xdE5d2e5CF46b7343581a5e17833527c00a54D9BD" },
-      "2e15": { label: "0.002", address: "0xFd6DACA65Cc9dCfEC1C03ccAb3AF60eB836c88b7" }
+      "1e15": { label: "0.001", address: "0x80c94b1DD897fD6953e28eD28A587eAca706E1D7" },
+      "2e15": { label: "0.002", address: "0x8EF50732367241FdEC6F031b7199f9A51dCd814B" }
     },
     LINK: {
-      "1e16": { label: "0.01", address: "0x33117E9ddf75bf87560B7a7b09393397Aa66f9Eb" },
-      "2e16": { label: "0.02", address: "0x6F819Db7D291A2f270C50E292f582B99fB940dCD" }
+      "1e16": { label: "0.01", address: "0x39Cb89c42A2BbB6125d2a422917554ce81e08217" },
+      "2e16": { label: "0.02", address: "0x9B31c37c94CF4625dA7c0cC450cd5dB73c91C859" }
     }
   };
   
@@ -765,7 +772,7 @@ export default function Home() {
         toast(`${result.error}`, 3000, "#ffadb7");
         return null;
       }
-      
+
       return result.data.leaves;
     } catch (error) {
       toast("Error fetching leaves for tree", 3000, "#ffadb7");
@@ -795,6 +802,56 @@ export default function Home() {
     }
   };
 
+
+  const fetchAnonymitySet = async () => {
+    
+    setAnonymitySetPending(true);
+    let deposits = 0;
+    let withdraws = 0;
+
+    try {
+      // Deposits
+      const depositResponse = await fetch('/api/envioFetchDepositCount', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ treeIndex: anonTreeIndex, poolAddress: anonPoolAddress})
+      });
+  
+      const depositResult = await depositResponse.json();
+      
+      if (depositResult.success) {
+        deposits = depositResult.data.depositCount;
+        setAnonDeposits(deposits);
+      } else {
+        toast(`${depositResult.error}`, 6000, "#ffadb7");
+      }
+
+      // Withdraws
+      const withdrawResponse = await fetch('/api/envioFetchWithdrawCount', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ treeIndex: anonTreeIndex, poolAddress: anonPoolAddress})
+      });
+  
+      const withdrawResult = await withdrawResponse.json();
+      
+      if (withdrawResult.success) {
+        withdraws = withdrawResult.data.withdrawCount;
+        setAnonWithdraws(withdraws);
+      } else {
+        toast(`${withdrawResult.error}`, 6000, "#ffadb7");
+      }
+
+      // Anon set
+      const anonymitySet = Math.max(0, deposits - withdraws);
+      setAnonSet(anonymitySet);
+      
+    } catch (error) {
+      toast("Error fetching anonymity set data.", 6000, "#ffadb7");
+    } finally {
+      setAnonymitySetPending(false);
+    }
+  };
 
   // ==========================
   // FILE DOWNLOADS
@@ -937,28 +994,34 @@ export default function Home() {
         <div className="flex">
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
+            className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
               ${activeTab === 'deposit' ? 'bg-gray-400' : 'bg-gray-500'}`}
             onClick={() => setActiveTab('deposit')}
           >Deposit</button>
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
+            className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
               ${activeTab === 'requestGas' ? 'bg-gray-400' : 'bg-gray-500'}`}
             onClick={() => setActiveTab('requestGas')}
           >Request Gas</button>
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
+            className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
               ${activeTab === 'sendGas' ? 'bg-gray-400' : 'bg-gray-500'}`}
             onClick={() => setActiveTab('sendGas')}
           >Send Gas</button>
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
+            className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
               ${activeTab === 'withdraw' ? 'bg-gray-400' : 'bg-gray-500'}`}
             onClick={() => setActiveTab('withdraw')}
           >Withdraw</button>
+
+          <button
+            className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
+              ${activeTab === 'anon' ? 'bg-gray-400' : 'bg-gray-500'}`}
+            onClick={() => setActiveTab('anon')}
+          >Anonymity Set</button>
         </div>
         
         {/* Transaction Dashboard Content */}
@@ -1014,8 +1077,8 @@ export default function Home() {
                 </button>
               </div>
               
-              {/* Display Contract (for debugging) */}
-              <div className="text-sm text-black mt-4">
+              {/* Display Pool Address */}
+              <div className="text-black font-bold mt-4">
                 {depositDenomination && (
                   <div>Pool Address: {poolInfo[depositToken][depositDenomination].address}</div>
                 )}
@@ -1158,7 +1221,7 @@ export default function Home() {
                 <label htmlFor="publishPrivately" className="text-black font-bold cursor-pointer">
                   Publish proof privately?
                 </label>
-                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-400 rounded-xl text-black border-2 border-gray-900 text-sm p-2 w-128">
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-400 rounded-xl text-black border-2 border-gray-900  p-2 w-128">
                 Publishing the proof privately saves it as a text file. If this box is unchecked, the proof is posted publicly on Telegram at `t.me/pulseinprivate` for anonymous relayers to fulfill. If your recipient address already has enough gas to withdraw, YOU CAN EARN THE RELAYER FEES YOURSELF by calling send gas from your recipient address.
                 </div>
               </div>
@@ -1331,6 +1394,65 @@ export default function Home() {
                   Execute Withdraw
                 </button>
               </div>
+            </div>
+          )}
+
+
+          {/* Anonymity Set Content */}
+          {activeTab === 'anon' && (
+            <div className="space-y-6">
+
+              {/* Ring Loader */}
+              {anonymitySetPending && (
+                <div className="ringloader">
+                  <div>
+                    <RingLoader color="#4d004d" size={250} speedMultiplier={0.5}/>
+                  </div>
+                </div>
+              )}
+
+              {/* Nullifier Input */}
+              <div>
+                <label className="text-black text-lg font-bold block mb-1 px-2">Tree Index</label>
+                <input
+                  type="text"
+                  value={anonTreeIndex}
+                  onChange={(e) => setAnonTreeIndex(e.target.value)}
+                  placeholder="69"
+                  className="input-field"
+                />
+              </div>
+              
+              {/* Pool Address Input */}
+              <div>
+                <label className="text-black text-lg font-bold block mb-1 px-2">Pool Address</label>
+                <input
+                  type="text"
+                  value={anonPoolAddress}
+                  onChange={(e) => setAnonPoolAddress(e.target.value)}
+                  placeholder="0x..."
+                  className="input-field"
+                />
+              </div>
+              
+              {/* Get Anonymity Set Button */}
+              <div className="pt-4">
+                <button
+                  onClick={fetchAnonymitySet}
+                  disabled={!anonTreeIndex || !anonPoolAddress || anonymitySetPending}
+                  className="button"
+                >
+                  Current Anonymity Set
+                </button>
+              </div>
+
+              {/* Display Anonymity Set */}
+              <div className="text-black font-bold mt-4">
+                {anonDeposits !== '' && anonWithdraws !== '' && (
+                  <p>Deposits: {anonDeposits} Withdraws: {anonWithdraws} Anonymity Set: {anonSet}</p>
+                )}
+              </div>
+
             </div>
           )}
 

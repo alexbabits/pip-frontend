@@ -296,6 +296,25 @@
   },
   {
     "type": "function",
+    "name": "rootTreeIndex",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "roots",
     "inputs": [
       {
@@ -598,7 +617,7 @@
   },
   {
     "type": "event",
-    "name": "Withdrawal",
+    "name": "Withdraw",
     "inputs": [
       {
         "name": "to",
@@ -610,6 +629,18 @@
         "name": "nullifierHash",
         "type": "bytes32",
         "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "_treeIndex",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "root",
+        "type": "bytes32",
+        "indexed": false,
         "internalType": "bytes32"
       }
     ],

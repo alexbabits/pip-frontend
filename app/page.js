@@ -15,10 +15,8 @@ export default function Home() {
   // STATE VARIABLES & EFFECTS
   // ==========================
 
-  // Wallet State
+  // Wallet & Transaction Dashboard Tabs
   const [currentAccount, setCurrentAccount] = useState('');
-
-  // Transaction Dashboard State
   const [activeTab, setActiveTab] = useState('deposit');
 
   // Deposit State
@@ -54,10 +52,10 @@ export default function Home() {
   // Anonymity Set State
   const [anonTreeIndex, setAnonTreeIndex] = useState('');
   const [anonPoolAddress, setAnonPoolAddress] = useState('');
-  const [anonymitySetPending, setAnonymitySetPending] = useState(false);
   const [anonDeposits, setAnonDeposits] = useState('');
   const [anonWithdraws, setAnonWithdraws] = useState('');
   const [anonSet, setAnonSet] = useState('');
+  const [anonSetPending, setAnonSetPending] = useState(false);
 
   // Constants
   const FIELD_SIZE = BigInt("21888242871839275222246405745257275088548364400416034343698204186575808495617");
@@ -205,7 +203,7 @@ export default function Home() {
     const poseidon = await buildPoseidon();
 
     // 1. Sanitize recipient & nullifier data, get pool address
-    const recipientData = checkRecipient(requestGasRecipient);
+    const recipientData = checkAddress(requestGasRecipient);
     const nullifierData = checkNullifierData(requestGasNullifier);
     if (!recipientData || !nullifierData) {
       setRequestGasPending(false);
@@ -338,7 +336,7 @@ export default function Home() {
       pC: pC_values
     };
 
-    const recipientData = checkRecipient(sendGasRecipient);
+    const recipientData = checkAddress(sendGasRecipient);
     if (!recipientData) return;
 
     const formattedPublicSignals = {
@@ -415,7 +413,7 @@ export default function Home() {
     }
 
     // 1. Sanitize recipient & nullifier data, get pool address
-    const recipientData = checkRecipient(withdrawRecipient);
+    const recipientData = checkAddress(withdrawRecipient);
     const nullifierData = checkNullifierData(withdrawNullifier);
     if (!recipientData || !nullifierData) {
       setWithdrawPending(false);
@@ -549,12 +547,12 @@ export default function Home() {
   // USER INPUT CHECKS
   // ==========================
 
-  const checkRecipient = (_recipient) => {
-    if (!_recipient.startsWith('0x') || _recipient.length !== 42) {
-      toast('Invalid recipient address. Must be a valid Ethereum address.', 3000, "#ffadb7");
+  const checkAddress = (_address) => {
+    if (!_address.startsWith('0x') || _address.length !== 42) {
+      toast('Invalid address.', 3000, "#ffadb7");
       return null;
     }
-    return _recipient;
+    return _address;
   };
 
 
@@ -804,11 +802,13 @@ export default function Home() {
 
 
   const fetchAnonymitySet = async () => {
-    
-    setAnonymitySetPending(true);
+
+    const addressReturn = checkAddress(anonPoolAddress);
+    if (!addressReturn) return;
+
+    setAnonSetPending(true);
     let deposits = 0;
     let withdraws = 0;
-
     try {
       // Deposits
       const depositResponse = await fetch('/api/envioFetchDepositCount', {
@@ -843,15 +843,16 @@ export default function Home() {
       }
 
       // Anon set
-      const anonymitySet = Math.max(0, deposits - withdraws);
+      const anonymitySet = deposits - withdraws;
       setAnonSet(anonymitySet);
       
     } catch (error) {
       toast("Error fetching anonymity set data.", 6000, "#ffadb7");
     } finally {
-      setAnonymitySetPending(false);
+      setAnonSetPending(false);
     }
   };
+
 
   // ==========================
   // FILE DOWNLOADS
@@ -1403,7 +1404,7 @@ export default function Home() {
             <div className="space-y-6">
 
               {/* Ring Loader */}
-              {anonymitySetPending && (
+              {anonSetPending && (
                 <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={250} speedMultiplier={0.5}/>
@@ -1439,7 +1440,7 @@ export default function Home() {
               <div className="pt-4">
                 <button
                   onClick={fetchAnonymitySet}
-                  disabled={!anonTreeIndex || !anonPoolAddress || anonymitySetPending}
+                  disabled={!anonTreeIndex || !anonPoolAddress || anonSetPending}
                   className="button"
                 >
                   Current Anonymity Set

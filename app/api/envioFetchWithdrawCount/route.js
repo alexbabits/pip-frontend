@@ -27,7 +27,7 @@ export async function POST(request) {
       if (!jsonResponse.data || !jsonResponse.data.Pip_Withdraw === undefined) {
         return Response.json({ 
           success: false, 
-          error: "Failed to get valid JSON response from Indexer" 
+          error: "Failed to get valid JSON response from Indexer for withdraw count" 
         }, { status: 400 });
       }
   

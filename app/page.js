@@ -61,18 +61,18 @@ export default function Home() {
   const FIELD_SIZE = BigInt("21888242871839275222246405745257275088548364400416034343698204186575808495617");
   const ZERO_VALUE = BigInt("11122724670666931127833274645309940916396779779585410472511079044548860378081");
   const GAS = 100000000000000n; // 1e14
-  const TREE_HEIGHT = 4; // CHANGED FROM 12 TO 4 FOR ANONYMITY SET TESTING
+  const TREE_HEIGHT = 12;
   const COMMITMENT_CONSTANT = 69420n;
   const CHAIN_ID = 11155111n; // Sepolia
 
   const poolInfo = {
     ETH: {
-      "1e15": { label: "0.001", address: "0x80c94b1DD897fD6953e28eD28A587eAca706E1D7" },
-      "2e15": { label: "0.002", address: "0x8EF50732367241FdEC6F031b7199f9A51dCd814B" }
+      "1e15": { label: "0.001", address: "0x4F9380a2f21112Bdca6A7113Cb93E94DC8305746" },
+      "2e15": { label: "0.002", address: "0x976AaDBB4B2b834816196F7af887a03FDC335CB2" }
     },
     LINK: {
-      "1e16": { label: "0.01", address: "0x39Cb89c42A2BbB6125d2a422917554ce81e08217" },
-      "2e16": { label: "0.02", address: "0x9B31c37c94CF4625dA7c0cC450cd5dB73c91C859" }
+      "1e16": { label: "0.01", address: "0xfbEd60FE519F120Fd72a9c30C2525995BA0AAca5" },
+      "2e16": { label: "0.02", address: "0x09D7E194fd9f01966C8125D32AdfC9F1Be8a40Ee" }
     }
   };
   
@@ -805,6 +805,15 @@ export default function Home() {
 
     const addressReturn = checkAddress(anonPoolAddress);
     if (!addressReturn) return;
+
+    const addressExists = Object.values(poolInfo).some(pools =>
+      Object.values(pools).some(pool => pool.address === anonPoolAddress)
+    );
+
+    if (!addressExists) {
+      toast("Not a valid pool address", 6000, "#ffadb7");
+      return;
+    }
 
     setAnonSetPending(true);
     let deposits = 0;

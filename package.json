@@ -11,7 +11,7 @@
   "dependencies": {
     "circomlibjs": "^0.1.7",
     "ethers": "^6.13.5",
-    "next": "15.2.2",
+    "next": "^15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-spinners": "^0.15.0",

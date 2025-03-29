@@ -22,32 +22,33 @@ export default function Home() {
   // Deposit State
   const [generatedNullifier, setGeneratedNullifier] = useState(null);
   const [depositLeaf, setDepositLeaf] = useState('');
-  const [depositToken, setDepositToken] = useState('ETH');
+  const [depositToken, setDepositToken] = useState('PLS');
   const [depositDenomination, setDepositDenomination] = useState(null);
   const [finalizeDepositOverlay, setFinalizeDepositOverlay] = useState(false);
   const [backupConfirmed, setBackupConfirmed] = useState(false);
   const [depositPending, setDepositPending] = useState(false);
 
-  // Request Gas State
-  const [requestGasNullifier, setRequestGasNullifier] = useState('');
-  const [requestGasRecipient, setRequestGasRecipient] = useState('');
-  const [publishPrivately, setPublishPrivately] = useState(false);
-  const [requestGasPending, setRequestGasPending] = useState(false);
+  // Request Withdraw State
+  const [requestWithdrawNullifier, setRequestWithdrawNullifier] = useState('');
+  const [requestWithdrawRecipient, setRequestWithdrawRecipient] = useState('');
+  const [requestWithdrawGas, setRequestWithdrawGas] = useState('');
+  const [requestWithdrawFee, setRequestWithdrawFee] = useState('');
+  const [requestWithdrawPending, setRequestWithdrawPending] = useState(false);
 
-  // Send Gas State
-  const [pA, set_pA] = useState('');
-  const [pB, set_pB] = useState('');
-  const [pC, set_pC] = useState('');
-  const [sendGasRecipient, setSendGasRecipient] = useState('');
-  const [sendGasNullifierHash, setSendGasNullifierHash] = useState('');
-  const [sendGasRoot, setSendGasRoot] = useState('');
-  const [sendGasPoolAddress, setSendGasPoolAddress] = useState('');
-  const [sendGasPending, setSendGasPending] = useState(false);
+  // User Withdraw State
+  const [userWithdrawNullifier, setUserWithdrawNullifier] = useState('');
+  const [userWithdrawRecipient, setUserWithdrawRecipient] = useState('');
+  const [userWithdrawPending, setUserWithdrawPending] = useState(false);
 
-  // Withdraw State
-  const [withdrawNullifier, setWithdrawNullifier] = useState('');
-  const [withdrawRecipient, setWithdrawRecipient] = useState('');
-  const [withdrawPending, setWithdrawPending] = useState(false);
+  // Relayer Withdraw State
+  const [proof, setProof] = useState('');
+  const [relayerWithdrawRecipient, setRelayerWithdrawRecipient] = useState('');
+  const [relayerWithdrawNullifierHash, setRelayerWithdrawNullifierHash] = useState('');
+  const [relayerWithdrawGas, setRelayerWithdrawGas] = useState('');
+  const [relayerWithdrawFee, setRelayerWithdrawFee] = useState('');
+  const [relayerWithdrawRoot, setRelayerWithdrawRoot] = useState('');
+  const [relayerWithdrawPoolAddress, setRelayerWithdrawPoolAddress] = useState('');
+  const [relayerWithdrawPending, setRelayerWithdrawPending] = useState(false);
 
   // Anonymity Set State
   const [anonTreeIndex, setAnonTreeIndex] = useState('');
@@ -60,31 +61,48 @@ export default function Home() {
   // Constants
   const FIELD_SIZE = BigInt("21888242871839275222246405745257275088548364400416034343698204186575808495617");
   const ZERO_VALUE = BigInt("11122724670666931127833274645309940916396779779585410472511079044548860378081");
-  const GAS = 100000000000000n; // 1e14
   const TREE_HEIGHT = 12;
   const COMMITMENT_CONSTANT = 69420n;
-  const CHAIN_ID = 11155111n; // Sepolia
+  const CHAIN_ID = 369n; // PulseChain = 369, Sepolia = 11155111
 
   const poolInfo = {
-    ETH: {
-      "1e15": { label: "0.001", address: "0x4F9380a2f21112Bdca6A7113Cb93E94DC8305746" },
-      "2e15": { label: "0.002", address: "0x976AaDBB4B2b834816196F7af887a03FDC335CB2" }
+    PLS: {
+      "1e18": { label: "1", address: "0xBa851Bb07a6D9F11310821a045B01c0b45Ee9B2b", value: 1000000000000000000n },
+      "10e18": { label: "10", address: "0x65295365012046777A879C7B47f96c2164c067D3", value: 10000000000000000000n },
+      "100e18": { label: "100", address: "0xA973081C228E6dE666E7F2F0e6530D564b65c7E7", value: 100000000000000000000n }, 
+      "1000e18": { label: "1K", address: "0x2A56ac08BEC952cB182Fc933a081dC659c726289", value: 1000000000000000000000n }
     },
-    LINK: {
-      "1e16": { label: "0.01", address: "0xfbEd60FE519F120Fd72a9c30C2525995BA0AAca5" },
-      "2e16": { label: "0.02", address: "0x09D7E194fd9f01966C8125D32AdfC9F1Be8a40Ee" }
+    PLSX: {
+      "1e18": { label: "1", address: "0x2af0dEfe6Ea7850357470FEc46030653DFec110B", value: 1000000000000000000n },
+      "10e18": { label: "10", address: "0x2797c507F8400af832943eA6e1Fa7491D35f8836", value: 10000000000000000000n },
+      "20e18": { label: "20", address: "0x63D74140D70F27F8326E8f5e7aEf67bc3a5405BF", value: 20000000000000000000n },
+      "100e18": { label: "100", address: "0x556Ab283a451F1C9e8B3A20B9A3c22Fb217a1691", value: 100000000000000000000n }
+    },
+    PHEX: {
+      "1e7": { label: "0.1", address: "0xbc114f72b70CaE713A1b2b7D961cF67eDf5e9892", value: 10000000n },
+      "1e8": { label: "1", address: "0x2bbf6Ab97b3f4597c81903094AE0be45a441CCCb", value: 100000000n },
+      "1e9": { label: "10", address: "0x1C10D270F93C173B74EAEad96Ef5ba871A199e35", value: 1000000000n },
+      "2e9": { label: "20", address: "0x1eF7A3001BC8ce9A194649f71B43C195DAA57E10", value: 2000000000n }
+    },
+    EHEX: {
+      "1e8": { label: "1", address: "0x3A82B734BFA22Ae380B158efc0Cf2a53bAd885a8", value: 100000000n },
+      "1e9": { label: "10", address: "0xB5F6D4C2dE81d037c3686E2654a9DAC4507d6a11", value: 1000000000n },
+      "2e9": { label: "20", address: "0x8798B89a9b8e0Ea4C7c141517618Eca8CF8F0216", value: 2000000000n },
+      "1e10": { label: "100", address: "0xA47F4EFd0E10379e59b7aDc0de86Ffb2b5230E26", value: 10000000000n }
+    },
+    INC: {
+      "1e16": { label: "0.01", address: "0xe5aA2D1101c7cC67bB13e27b3AfF234B537268a0", value: 10000000000000000n },
+      "1e17": { label: "0.1", address: "0x953f36CF20093685953d65B32378af53CB5965a5", value: 100000000000000000n },
+      "2e17": { label: "0.2", address: "0x41aC7fb22432a09FF35bc08e659D01b0821973B7", value: 200000000000000000n },
+      "1e18": { label: "1", address: "0x25325c05f78975F28D15fBd7354a9b6849e45445", value: 1000000000000000000n }
     }
-  };
-  
-  const denominationValues = {
-    "1e15": 1000000000000000n,  // 0.001 ETH in wei
-    "2e15": 2000000000000000n,  // 0.002 ETH in wei
-    "1e16": 10000000000000000n, // 0.01 LINK in wei
-    "2e16": 20000000000000000n  // 0.02 LINK in wei
   };
 
   const tokenAddresses = {
-    "LINK": "0x779877A7B0D9E8603169DdbD7836e478b4624789"
+    "PLSX": "0x95B303987A60C71504D99Aa1b13B4DA07b0790ab",
+    "PHEX": "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
+    "EHEX": "0x57fde0a71132198BBeC939B98976993d8D89D225",
+    "INC": "0x2fa878Ab3F87CC1C9737Fc071108F904c0B0C95d"
   };
 
 
@@ -120,33 +138,33 @@ export default function Home() {
 
   const executeDeposit = async () => {
 
-    // 0. Must have wallet
+    // 1. Must have wallet
     const wallet = getWallet();
     if (!wallet) return;
 
-    // 0. Verify user is connected to correct network
+    // 2. Verify user is connected to correct network
     const provider = new ethers.BrowserProvider(wallet);
     const network = await provider.getNetwork();
     if (network.chainId !== CHAIN_ID) {
-      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (Sepolia)`, 3000, "#ffadb7");
+      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (PulseChain)`, 3000, "#ffadb7");
       return;
     }
 
-    // 1. Instantiate specific PIP pool
+    // 3. Instantiate specific PIP pool
     const poolAddress = poolInfo[depositToken][depositDenomination].address;
     const signer = await provider.getSigner();
     const pool = new ethers.Contract(poolAddress, PipABI, signer);
 
-    // 2. Check allowance for the ERC20 token, and increase if needed
-    const denomination = denominationValues[depositDenomination];
+    // 4. Check allowance for the ERC20 token, and increase if needed
+    const denomination = poolInfo[depositToken][depositDenomination].value;
     const tokenAddress = tokenAddresses[depositToken];
 
     setDepositPending(true);
-    if (depositToken !== 'ETH') {
+    if (depositToken !== 'PLS') {
       try {
         const currentAllowance = await checkAllowance(tokenAddress, poolAddress, signer);
         // we only approve the exact denomination each time.
-        // If the pool somehow accumulates excess allowance (should never), we skip the approval step.
+        // If the pool accumulates excess allowance we skip the approval step.
         currentAllowance < denomination 
           ? await approve(poolAddress, tokenAddress, denomination, signer)
           : console.log("Sufficient allowance, skipping ERC20 token approval.");
@@ -157,12 +175,12 @@ export default function Home() {
       }
     }
 
-    // 3. Execute the deposit
+    // 5. Execute the deposit
     let tx;
     try {
-      depositToken === 'ETH' 
-        ? tx = await pool.deposit(depositLeaf, { value: denomination + GAS})
-        : tx = await pool.deposit(depositLeaf, { value: GAS });
+      depositToken === 'PLS' 
+        ? tx = await pool.deposit(depositLeaf, { value: denomination })
+        : tx = await pool.deposit(depositLeaf);
       toast(`Deposit tx submitted ${tx.hash}`, 6000, "#99ffb1");
       const receipt = await tx.wait();
       toast(`Deposit tx validated in block ${receipt.blockNumber}`, 6000, "#99ffb1");
@@ -178,77 +196,76 @@ export default function Home() {
 
 
   // ==========================
-  // REQUEST GAS
+  // REQUEST WITHDRAW
   // ==========================
 
-  const requestGas = async () => {
+  const requestWithdraw = async () => {
+    setRequestWithdrawPending(true);
 
-    setRequestGasPending(true);
-
-    // 0. Instantiate provider using user's wallet, check correct network.
-    // 0. Also, build Poseidon once for all the helpers
+    // 1. Check for wallet
     const wallet = getWallet();
     if (!wallet) {
-      setRequestGasPending(false);
+      setRequestWithdrawPending(false);
       return;
     }
+
+    // 2. Instantiate provider, build poseidon for helper functions, check network
     const provider = new ethers.BrowserProvider(wallet); 
     const network = await provider.getNetwork();
+    const poseidon = await buildPoseidon();
     if (network.chainId !== CHAIN_ID) {
-      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (Sepolia)`, 6000, "#ffadb7");
-      setRequestGasPending(false);
+      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (PulseChain)`, 6000, "#ffadb7");
+      setRequestWithdrawPending(false);
       return;
     }
 
-    const poseidon = await buildPoseidon();
-
-    // 1. Sanitize recipient & nullifier data, get pool address
-    const recipientData = checkAddress(requestGasRecipient);
-    const nullifierData = checkNullifierData(requestGasNullifier);
-    if (!recipientData || !nullifierData) {
-      setRequestGasPending(false);
+    // 3. Sanitize user inputs {Recipient, Nullifier, Gas, Fee}, and get pool address
+    const recipientData = checkAddress(requestWithdrawRecipient);
+    const nullifierData = checkNullifierData(requestWithdrawNullifier);
+    const gasFormatted = checkGas(requestWithdrawGas);
+    const feeFormatted = checkFee(requestWithdrawFee);
+    if (!recipientData || !nullifierData || !gasFormatted || !feeFormatted) {
+      setRequestWithdrawPending(false);
       return;
     }
 
     const { token, denomination, nullifierBigInt } = nullifierData;
-
     const poolAddress = poolInfo[token][denomination].address;
 
-    // 2. Compute leaf from nullifier
+    // 4. Compute leaf from nullifier
     const _leaf = await computeLeaf(nullifierBigInt, poseidon);
-
-    // 3. Make a query to Envio to get the leaf index and tree index for this leaf's Deposit event
+  
+    // 5. Query Envio Indexer to get the leaf index and tree index for this leaf's Deposit event
     const indices = await fetchIndicesForLeaf(_leaf, poolAddress);
     if (!indices) {
-      setRequestGasPending(false);
+      setRequestWithdrawPending(false);
       return;
     }
 
     const {leafIndex, treeIndex} = indices;
 
-    // 4. Compute nullifier hash from nullifier and leaf index
+    // 6. Compute nullifierHash and pathIndices
     const nullifierHash = await computeNullifierHash(nullifierBigInt, leafIndex, poseidon);
-
-    // 5. Compute path indices from leaf index
     const pathIndices = computePathIndices(leafIndex);
 
-    // 6. Make a second query to get all the leaves of the tree for the specific pool
+    // 7. Query Envio Indexer again to get all the leaves of the tree for the specific pool
     const leaves = await fetchLeavesForTree(treeIndex, poolAddress);
     if (!leaves) {
-      setRequestGasPending(false);
+      setRequestWithdrawPending(false);
       return;
     }
 
-    // 7. Build the specific tree for this pool from all the input leaves.
+    // 8. Build the specific tree for this pool from all the input leaves.
     const { tree, root } = await buildTree(leaves, poseidon);
 
-    // 8. Calculate pathElements based on the tree.
-    const pathElements = getPathElements(tree, leafIndex);
-    const formattedPathElements = await formatPathElements(pathElements, poseidon);
+    // 9. Calculate pathElements based on the tree.
+    const formattedPathElements = getPathElements(tree, leafIndex, poseidon);
 
-    // 9. Gather all witness inputs
+    // 10. Gather all witness inputs
     const input = {
-      recipient: BigInt(requestGasRecipient).toString(),
+      recipient: BigInt(requestWithdrawRecipient).toString(),
+      gas: gasFormatted,
+      fee: feeFormatted,
       nullifierHash: nullifierHash.toString(),
       root: root.toString(),
       nullifier: nullifierBigInt.toString(),
@@ -256,208 +273,144 @@ export default function Home() {
       pathIndices: pathIndices
     };
 
-    // 10. Generate proof with input
+    // 11. Generate proof with input
     const fullProof = await generateProof(input);
     if (!fullProof) {
-      setRequestGasPending(false);
+      setRequestWithdrawPending(false);
       return;
     }
     const { proof, publicSignals} = fullProof;
 
-    // 11. Validate proof with snarkjs
+    // 12. Validate proof with snarkjs
     const isValidProof = await validateProof(proof, publicSignals);
     if (!isValidProof) {
-      setRequestGasPending(false);
+      setRequestWithdrawPending(false);
       toast("Snarkjs proof validation failed.", 3000, "#ffadb7");
       return;
     }
 
-    // 12. Format proof and signals. 
-    const formattedProof = {
-      pA: [proof.pi_a[0], proof.pi_a[1]],
-      // `snarkjs.fullProve` - We must manually switch X and Y coordinates of pB to match solidity verifier
-      // `snarkjs generatecall` with node.js - automatically switches X and Y coordinates of pB to match solidity verifier
-      pB: [ [proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]] ],
-      pC: [proof.pi_c[0], proof.pi_c[1]]
-    };
+    // 13. Format proof and signals.
+    const formattedProof = [
+      proof.A[0], proof.A[1], // A = [A.x, A.y]
+      proof.B[0], proof.B[1], // B = [B.x, B.y]
+      proof.C[0], proof.C[1], // C = [C.x, C.y]
+      proof.Z[0], proof.Z[1], // Z = [Z.x, Z.y]
+      proof.T1[0], proof.T1[1], // T1 = [T1.x, T1.y]
+      proof.T2[0], proof.T2[1], // T2 = [T2.x, T2.y]
+      proof.T3[0], proof.T3[1], // T3 = [T3.x, T3.y]
+      proof.Wxi[0], proof.Wxi[1], // Wxi = [Wxi.x, Wxi.y]
+      proof.Wxiw[0], proof.Wxiw[1], // Wxiw = [Wxiw.x, Wxiw.y]
+      
+      // Evaluations
+      proof.eval_a,
+      proof.eval_b,
+      proof.eval_c,
+      proof.eval_s1,
+      proof.eval_s2,
+      proof.eval_zw
+    ];
 
     const formattedPublicSignals = {
-      recipient: requestGasRecipient,
+      recipient: requestWithdrawRecipient,
+      gas: gasFormatted,
+      fee: feeFormatted,
       // JS removes leading zero padding. Adds back if needed. 66 characters always required for bytes32 in solidity.
-      nullifierHash: `0x${BigInt(publicSignals[1]).toString(16).padStart(64, "0")}`,
-      root: `0x${BigInt(publicSignals[2]).toString(16).padStart(64, "0")}`
+      nullifierHash: `0x${BigInt(publicSignals[3]).toString(16).padStart(64, "0")}`,
+      root: `0x${BigInt(publicSignals[4]).toString(16).padStart(64, "0")}`
     };
 
-    // 13. Ensure proof has not already been used to send gas.
+    // 14. Ensure proof has not already been used.
     try {
       const pool = new ethers.Contract(poolAddress, PipABI, provider);
-      await pool.checkProof(formattedProof, formattedPublicSignals, 0); // 0 = ProofType.Gas
+      await pool.checkProof(formattedProof, formattedPublicSignals);
       console.log("Proof is valid. Root from proof matched. Proof hasn't been used to send gas yet. Publishing proof...");
     } catch (error) {
-      toast(`checkProof call failed.\n1. Proof already spent and recipient already has gas\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 10000, "#ffadb7");
-      setRequestGasPending(false);
+      toast(`checkProof call failed.\n1. NullifierHash from proof already used\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 15000, "#ffadb7");
+      setRequestWithdrawPending(false);
       return;
     }
 
-    // 14. Publish proof privately or publicly.
-    if (publishPrivately) {
-      saveProofToFile(formattedProof, formattedPublicSignals, poolAddress);
-    } else {
-      try {
-        await sendTelegramMessage(formattedProof, formattedPublicSignals, poolAddress);
-      } catch {
-        return;
-      }
+    // 15. Publish proof on telegram at "t.me/pulseinprivate" for relayers to fulfill.
+    try {
+      await sendTelegramMessage(formattedProof, formattedPublicSignals, poolAddress);
+    } catch {
+      return;
     }
-    setRequestGasPending(false);
+    setRequestWithdrawPending(false);
     toast("Proof successfully published!", 5000, "#99ffb1");
   };
 
 
   // ==========================
-  // SEND GAS
+  // USER WITHDRAW
   // ==========================
 
-  const sendGas = async () => {
+  const userWithdraw = async () => {
+    setUserWithdrawPending(true);
 
-    // 0. Format user inputs
-    const pA_values = pA.split(',').map(val => val.trim());
-    const pB_values = pB.split(',').map(val => val.trim());
-    const pC_values = pC.split(',').map(val => val.trim());
-
-    if (pA_values.length !== 2 || pB_values.length !== 4 || pC_values.length !== 2) {
-      toast("Incorrectly formatted proof values", 3000, "#ffadb7");
-      return;
-    }
-
-    const formattedProof = {
-      pA: pA_values,
-      pB: [ [pB_values[0], pB_values[1]], [pB_values[2], pB_values[3]] ],
-      pC: pC_values
-    };
-
-    const recipientData = checkAddress(sendGasRecipient);
-    if (!recipientData) return;
-
-    const formattedPublicSignals = {
-      recipient: sendGasRecipient,
-      nullifierHash: sendGasNullifierHash,
-      root: sendGasRoot
-    };
-
-    // 0. Must have wallet
-    const wallet = getWallet();
-    if (!wallet) return;
-
-    // 0. Verify user is connected to correct network
-    const provider = new ethers.BrowserProvider(wallet);
-    const signer = await provider.getSigner();
-
-    const network = await provider.getNetwork();
-    if (network.chainId !== CHAIN_ID) {
-      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (Sepolia)`, 6000, "#ffadb7");
-      return;
-    }
-
-    // 1. Instantiate pool contract
-    const pool = new ethers.Contract(sendGasPoolAddress, PipABI, signer);
-
-    // 2. Ensure proof is correct and hasn't been used to send gas yet.
-    setSendGasPending(true);
-    try {
-      await pool.checkProof(formattedProof, formattedPublicSignals, 0); // 0 = ProofType.Gas
-    } catch (error) {
-      toast("Failure to send gas.\n1. Incorrect proof/signal inputs\n2. Nullifier Hash for proof has already been used to send gas.", 6000, "#ffadb7");
-      setSendGasPending(false);
-      return;
-    }
-
-    // 3. Execute sendGas()
-    try {
-      const tx = await pool.sendGas(formattedProof, formattedPublicSignals);
-      toast(`Send Gas tx submitted ${tx.hash}`, 6000, "#99ffb1");
-      const receipt = await tx.wait();
-      toast(`Send Gas tx validated in block ${receipt.blockNumber}`, 6000, "#99ffb1");
-    } catch (error) {
-      toast(`Send Gas tx failed`, 3000, "#ffadb7");
-      setSendGasPending(false);
-      return;
-    }
-    setSendGasPending(false);
-  };
-
-
-  // ==========================
-  // WITHDRAW
-  // ==========================
-
-  const withdraw = async () => {
-    setWithdrawPending(true);
-
-    // 0. Instantiate provider, signer, and build poseidon for helper functions
+    // 1. Check for wallet
     const wallet = getWallet();
     if (!wallet) {
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
       return;
     }
+
+    // 2. Instantiate provider, signer, build poseidon for helper functions, check network
     const provider = new ethers.BrowserProvider(wallet); 
     const signer = await provider.getSigner();
     const poseidon = await buildPoseidon();
-
-    // 0. Verify user is connected to correct network
     const network = await provider.getNetwork();
     if (network.chainId !== CHAIN_ID) {
-      setWithdrawPending(false);
-      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (Sepolia)`, 3000, "#ffadb7");
+      setUserWithdrawPending(false);
+      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (PulseChain)`, 3000, "#ffadb7");
       return;
     }
 
-    // 1. Sanitize recipient & nullifier data, get pool address
-    const recipientData = checkAddress(withdrawRecipient);
-    const nullifierData = checkNullifierData(withdrawNullifier);
+    // 3. Sanitize recipient & nullifier data, get pool address
+    const recipientData = checkAddress(userWithdrawRecipient);
+    const nullifierData = checkNullifierData(userWithdrawNullifier);
     if (!recipientData || !nullifierData) {
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
       return;
     }
-
+    
     const { token, denomination, nullifierBigInt } = nullifierData;
     const poolAddress = poolInfo[token][denomination].address;
 
-    // 2. Compute leaf from nullifier
+    // 4. Compute leaf from nullifier
     const _leaf = await computeLeaf(nullifierBigInt, poseidon);
 
-    // 3. Make a query to Envio to get the leaf index and tree index for our Deposit event
+    // 5. Query Envio Indexer to get the leaf index and tree index for this leaf's Deposit event
     const indices = await fetchIndicesForLeaf(_leaf, poolAddress);
     if (!indices) {
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
       return;
     }
 
     const {leafIndex, treeIndex} = indices;
 
-    // 4. Compute nullifier hash from nullifier and leaf index
+    // 6. Compute nullifierHash and pathIndices
     const nullifierHash = await computeNullifierHash(nullifierBigInt, leafIndex, poseidon);
-
-    // 5. Compute path indices from leaf index
     const pathIndices = computePathIndices(leafIndex);
 
-    // 6. Make a second query to get all the leaves of the tree for the specific pool
+    // 7. Query Envio Indexer again to get all the leaves of the tree for the specific pool
     const leaves = await fetchLeavesForTree(treeIndex, poolAddress);
     if (!leaves) {
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
       return;
     }
 
-    // 7. Build the specific tree for this pool from all the input leaves.
+    // 8. Build the specific tree for this pool from all the input leaves.
     const { tree, root } = await buildTree(leaves, poseidon);
 
-    // 8. Calculate pathElements based on the tree.
-    const pathElements = getPathElements(tree, leafIndex);
-    const formattedPathElements = await formatPathElements(pathElements, poseidon);
+    // 9. Calculate pathElements based on the tree.
+    const formattedPathElements = getPathElements(tree, leafIndex, poseidon);
 
-    // 9. Gather all witness inputs
+    // 10. Gather all witness inputs
     const input = {
-      recipient: BigInt(withdrawRecipient).toString(),
+      recipient: BigInt(userWithdrawRecipient).toString(),
+      gas: "0",
+      fee: "0",
       nullifierHash: nullifierHash.toString(),
       root: root.toString(),
       nullifier: nullifierBigInt.toString(),
@@ -465,51 +418,65 @@ export default function Home() {
       pathIndices: pathIndices
     };
 
-    // 10. Generate proof with input
+    // 11. Generate proof with input
     const fullProof = await generateProof(input);
     if (!fullProof) {
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
       return;
     }
     const { proof, publicSignals} = fullProof;
 
-    // 11. Validate proof with snarkjs
+    // 12. Validate proof with snarkjs
     const isValidProof = await validateProof(proof, publicSignals);
     if (!isValidProof) {
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
       toast("Snarkjs proof validation failed.", 3000, "#ffadb7");
       return;
     }
 
-    // 12. Format proof and signals. 
-    const formattedProof = {
-      pA: [proof.pi_a[0], proof.pi_a[1]],
-      // `snarkjs.fullProve` - We must manually switch X and Y coordinates of pB to match solidity verifier
-      // `snarkjs generatecall` with node.js - automatically switches X and Y coordinates of pB to match solidity verifier
-      pB: [ [proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]] ],
-      pC: [proof.pi_c[0], proof.pi_c[1]]
-    };
+    // 13. Format proof and signals.
+    const formattedProof = [
+      proof.A[0], proof.A[1], // A = [A.x, A.y]
+      proof.B[0], proof.B[1], // B = [B.x, B.y]
+      proof.C[0], proof.C[1], // C = [C.x, C.y]
+      proof.Z[0], proof.Z[1], // Z = [Z.x, Z.y]
+      proof.T1[0], proof.T1[1], // T1 = [T1.x, T1.y]
+      proof.T2[0], proof.T2[1], // T2 = [T2.x, T2.y]
+      proof.T3[0], proof.T3[1], // T3 = [T3.x, T3.y]
+      proof.Wxi[0], proof.Wxi[1], // Wxi = [Wxi.x, Wxi.y]
+      proof.Wxiw[0], proof.Wxiw[1], // Wxiw = [Wxiw.x, Wxiw.y]
+      
+      // Evaluations
+      proof.eval_a,
+      proof.eval_b,
+      proof.eval_c,
+      proof.eval_s1,
+      proof.eval_s2,
+      proof.eval_zw
+    ];
 
     const formattedPublicSignals = {
-      recipient: withdrawRecipient,
+      recipient: userWithdrawRecipient,
+      gas: "0",
+      fee: "0",
       // JS removes leading zero padding. Adds back if needed. 66 characters always required for bytes32 in solidity.
-      nullifierHash: `0x${BigInt(publicSignals[1]).toString(16).padStart(64, "0")}`,
-      root: `0x${BigInt(publicSignals[2]).toString(16).padStart(64, "0")}`
+      nullifierHash: `0x${BigInt(publicSignals[3]).toString(16).padStart(64, "0")}`,
+      root: `0x${BigInt(publicSignals[4]).toString(16).padStart(64, "0")}`
     };
 
-    // 13. Ensure proof has not already been used to withdraw
+    // 14. Ensure proof has not already been used to withdraw
     const pool = new ethers.Contract(poolAddress, PipABI, signer);
 
     try {
-      await pool.checkProof(formattedProof, formattedPublicSignals, 1); // 1 = ProofType.Withdraw
+      await pool.checkProof(formattedProof, formattedPublicSignals);
       console.log("Proof is valid. Root from proof matched. Proof hasn't been used to withdraw. Withdrawing...");
     } catch (error) {
-      toast(`checkProof call failed.\n1. Nullifier Hash from proof already spent and recipient got withdraw.\n2. Proof passed snarkjs verification but somehow failed solidity verification. `, 10000, "#ffadb7");
-      setWithdrawPending(false);
+      toast(`checkProof call failed.\n1. NullifierHash from proof already used\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 15000, "#ffadb7");
+      setUserWithdrawPending(false);
       return;
     }
 
-    // 14. Execute withdraw
+    // 15. Execute withdraw (always 0 gas and fee. No value sent, no relayer fee.)
     try {
       const tx = await pool.withdraw(formattedProof, formattedPublicSignals);
       toast(`Withdraw tx submitted ${tx.hash}`, 6000, "#99ffb1");
@@ -517,11 +484,84 @@ export default function Home() {
       toast(`Withdraw tx validated in block ${receipt.blockNumber}`, 6000, "#99ffb1");
     } catch (error) {
       toast(`Withdraw tx failed`, 3000, "#ffadb7");
-      setWithdrawPending(false);
+      setUserWithdrawPending(false);
+      return;
+    } 
+
+    setUserWithdrawPending(false);
+  };
+
+  
+  // ==========================
+  // RELAYER WITHDRAW
+  // ==========================
+
+  const relayerWithdraw = async () => {
+
+    // 1. Format proof and public signals
+    let formattedProof;
+    try {
+      // Parse the proof string pasted from telegram public proof into an array of BigInts
+      formattedProof = proof.split(',').map(val => BigInt(val.trim()));
+      
+      // Validate we have exactly 24 proof elements
+      if (formattedProof.length !== 24) {
+        toast("Incorrectly formatted proof. Expected 24 values.", 3000, "#ffadb7");
+        return;
+      }
+    } catch (error) {
+      toast("Error parsing proof values. Make sure they're valid numbers.", 6000, "#ffadb7");
       return;
     }
 
-    setWithdrawPending(false);
+    const formattedPublicSignals = {
+      recipient: relayerWithdrawRecipient,
+      gas: relayerWithdrawGas,
+      fee: relayerWithdrawFee,
+      nullifierHash: relayerWithdrawNullifierHash,
+      root: relayerWithdrawRoot
+    };
+
+    // 2. Must have wallet
+    const wallet = getWallet();
+    if (!wallet) return;
+
+    // 3. Verify user is connected to correct network
+    const provider = new ethers.BrowserProvider(wallet);
+    const signer = await provider.getSigner();
+    const network = await provider.getNetwork();
+    if (network.chainId !== CHAIN_ID) {
+      toast(`Wrong network! Please switch to Chain ID ${CHAIN_ID} (PulseChain)`, 6000, "#ffadb7");
+      return;
+    }
+
+    // 4. Instantiate pool contract
+    const pool = new ethers.Contract(relayerWithdrawPoolAddress, PipABI, signer);
+
+    // 5. Ensure proof is correct and the nullifierHash hasn't been used yet
+    setRelayerWithdrawPending(true);
+    try {
+      await pool.checkProof(formattedProof, formattedPublicSignals);
+    } catch (error) {
+      toast("Solidity checkProof failed.\n1. Incorrect proof/signal inputs\n2. Nullifier Hash from proof already used.", 6000, "#ffadb7");
+      setRelayerWithdrawPending(false);
+      return;
+    }
+
+    // 6. Execute withdraw on behalf of recipient (must send the requested gas amount, relayer gets requested fee offer).
+    try {
+      const tx = await pool.withdraw(formattedProof, formattedPublicSignals, { value: relayerWithdrawGas});
+      toast(`Withdraw tx submitted ${tx.hash}`, 6000, "#99ffb1");
+      const receipt = await tx.wait();
+      toast(`Withdraw tx validated in block ${receipt.blockNumber}`, 6000, "#99ffb1");
+    } catch (error) {
+      console.log(error);
+      toast(`Withdraw tx failed`, 3000, "#ffadb7");
+      setRelayerWithdrawPending(false);
+      return;
+    }
+
+    setRelayerWithdrawPending(false);
   };
 
 
@@ -597,6 +637,66 @@ export default function Home() {
   };
 
 
+  const checkGas = (gasInput) => {
+    // Must specifically input a value
+    if (!gasInput || gasInput.trim() === '') {
+      toast('Please enter a gas value or 0', 3000, "#ffadb7");
+      return null;
+    }
+
+    // Remove commas if needed
+    const gasValue = gasInput.replace(/,/g, '');
+
+    // Positive whole number
+    if (!/^\d+$/.test(gasValue)) {
+      toast('Gas must be a positive whole number', 3000, "#ffadb7");
+      return null;
+    }
+    
+    // Reasonable upper limit check (even though contract has no limit)
+    const gasNumber = Number(gasValue);
+    if (gasNumber > 1000000000) {
+      toast('Gas value is too high', 3000, "#ffadb7");
+      return null;
+    }
+    
+    // convert to wei and stringify
+    const gasFormatted = (BigInt(gasNumber) * 1000000000000000000n).toString();
+    return gasFormatted;
+  };
+
+
+  const checkFee = (feeInput) => {
+    // Must specifically input a value
+    if (!feeInput || feeInput.trim() === '') {
+      toast('Please enter a fee percentage or 0', 3000, "#ffadb7");
+      return null;
+    }
+
+    // Remove % sign if present
+    let feeValue = feeInput.replace('%', '').trim();
+
+    // Validate positive number with up to 2 decimals
+    if (!/^\d+(\.\d{1,2})?$/.test(feeValue)) {
+      toast('Fee must be a percentage with up to 2 decimal places', 3000, "#ffadb7");
+      return null;
+    }
+    
+    // Convert to number for range checking
+    const feeNumber = parseFloat(feeValue);
+    
+    // Check range
+    if (feeNumber < 0 || feeNumber > 100) {
+      toast('Fee must be between 0% and 100%', 3000, "#ffadb7");
+      return null;
+    }
+
+    const feeBasisPoints = Math.round(feeNumber * 100);
+
+    return feeBasisPoints.toString();
+  };
+
+
   // ==========================
   // TREE CALCULATIONS
   // ==========================
@@ -636,7 +736,7 @@ export default function Home() {
   };
 
 
-  const getPathElements = (tree, leafIndex) => {
+  const getPathElements = (tree, leafIndex, poseidon) => {
     const pathElements = [];
     let x = BigInt(leafIndex);
     
@@ -645,13 +745,13 @@ export default function Home() {
       pathElements.push(tree[y][Number(siblingX)]); // Convert back to Number for array index
       x = x / 2n;
     }
-    
-    return pathElements;
-  };
 
+    const formattedProofElements = pathElements.map(
+      element => typeof element === "bigint" 
+        ? element.toString() 
+        : poseidon.F.toString(element, 10));
 
-  const formatPathElements = async (pathElements, poseidon) => {
-    return pathElements.map(element => typeof element === "bigint" ? element.toString() : poseidon.F.toString(element, 10));
+    return formattedProofElements;
   };
 
 
@@ -703,10 +803,11 @@ export default function Home() {
     }
 
     try {
-      const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(
+      console.log("generating full PLONK proof...");
+      const { proof, publicSignals } = await window.snarkjs.plonk.fullProve(
         input, 
         "/withdraw.wasm", 
-        "/withdraw_0001.zkey"
+        "/withdraw_final.zkey"
       );
       
       return { proof, publicSignals };
@@ -721,7 +822,7 @@ export default function Home() {
     try {
       const vkeyRes = await fetch("/verification_key.json");
       const vkey = await vkeyRes.json();
-      const isValidProof = await window.snarkjs.groth16.verify(vkey, publicSignals, proof);
+      const isValidProof = await window.snarkjs.plonk.verify(vkey, publicSignals, proof);
       return isValidProof;
     } catch (error) {
       return false;
@@ -781,20 +882,15 @@ export default function Home() {
 
   const sendTelegramMessage = async (proof, pubSignals, poolAddress) => {
     try {
-      const message = `PROOF
-      \npA: ${proof.pA[0]}, ${proof.pA[1]}
-      \npB: ${proof.pB[0][0]}, ${proof.pB[0][1]}, ${proof.pB[1][0]}, ${proof.pB[1][1]}
-      \npC: ${proof.pC[0]}, ${proof.pC[1]}
-      \nPUBLIC SIGNALS
-      \nRecipient: ${pubSignals.recipient}\nNullifier Hash: ${pubSignals.nullifierHash}\nRoot: ${pubSignals.root}\nPool Address: ${poolAddress}`;
-
+      const message = `\nPROOF\n\n${proof}\n\nPUBLIC SIGNALS\nRecipient: ${pubSignals.recipient}\nGas (Wei): ${pubSignals.gas}\nFee (Basis Points): ${pubSignals.fee}\nNullifier Hash: ${pubSignals.nullifierHash}\nRoot: ${pubSignals.root}\nPool Address: ${poolAddress}`;
+  
       await fetch('/api/telegram', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({message})
       });
     } catch (error) {
-      setRequestGasPending(false);
+      setRequestWithdrawPending(false);
       toast("Failure to post Telegram message.", 3000, "#ffadb7");
       throw error;
     }
@@ -864,7 +960,7 @@ export default function Home() {
 
 
   // ==========================
-  // FILE DOWNLOADS
+  // FILE DOWNLOAD
   // ==========================
 
   const saveNullifierToFile = (nullifier, token, denomination) => {
@@ -873,28 +969,6 @@ export default function Home() {
 
     const filename = `${token}-${denomination}-${abbreviatedNullifier}.txt`;
     const fileContent = `${token}-${denomination}-${nullifierStr}`;
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-  };
-
-
-  const saveProofToFile = (proof, pubSignals, poolAddress) => {
-    const abbreviated_pA = proof.pA[0].substring(0, 8);
-
-    const filename = `proof-${abbreviated_pA}.txt`;
-    const fileContent = `PROOF
-      \npA: ${proof.pA[0]}, ${proof.pA[1]}
-      \npB: ${proof.pB[0][0]}, ${proof.pB[0][1]}, ${proof.pB[1][0]}, ${proof.pB[1][1]}
-      \npC: ${proof.pC[0]}, ${proof.pC[1]}
-      \nPUBLIC SIGNALS
-      \nRecipient: ${pubSignals.recipient}\nNullifier Hash: ${pubSignals.nullifierHash}\nRoot: ${pubSignals.root}\nPool Address: ${poolAddress}`;
     const blob = new Blob([fileContent], { type: 'text/plain' });
 
     const link = document.createElement('a');
@@ -1011,21 +1085,21 @@ export default function Home() {
 
           <button
             className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
-              ${activeTab === 'requestGas' ? 'bg-gray-400' : 'bg-gray-500'}`}
-            onClick={() => setActiveTab('requestGas')}
-          >Request Gas</button>
+              ${activeTab === 'requestWithdraw' ? 'bg-gray-400' : 'bg-gray-500'}`}
+            onClick={() => setActiveTab('requestWithdraw')}
+          >Request Withdraw</button>
 
           <button
             className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
-              ${activeTab === 'sendGas' ? 'bg-gray-400' : 'bg-gray-500'}`}
-            onClick={() => setActiveTab('sendGas')}
-          >Send Gas</button>
+              ${activeTab === 'userWithdraw' ? 'bg-gray-400' : 'bg-gray-500'}`}
+            onClick={() => setActiveTab('userWithdraw')}
+          >User Withdraw</button>
 
           <button
             className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
-              ${activeTab === 'withdraw' ? 'bg-gray-400' : 'bg-gray-500'}`}
-            onClick={() => setActiveTab('withdraw')}
-          >Withdraw</button>
+              ${activeTab === 'relayerWithdraw' ? 'bg-gray-400' : 'bg-gray-500'}`}
+            onClick={() => setActiveTab('relayerWithdraw')}
+          >Relayer Withdraw</button>
 
           <button
             className={`px-4 py-3 text-lg font-bold rounded-t-lg border-1 text-black hover:bg-gray-400
@@ -1043,13 +1117,13 @@ export default function Home() {
             <div className="space-y-6">
 
               {/* Token Options */}
-              <div className="grid grid-cols-2 gap-4">
-                {['ETH', 'LINK'].map((token) => (
+              <div className="grid grid-cols-5 gap-4">
+                {['PLS', 'PLSX', 'PHEX', 'EHEX', 'INC'].map((token) => (
                   <button
                     key={token}
                     onClick={() => {
                       setDepositToken(token);
-                      setDepositDenomination(null); // Reset denomination when token changes
+                      setDepositDenomination(null);
                     }}
                     className={`border-2 border-gray-900 rounded-lg p-4 cursor-pointer transition-colors flex justify-center items-center 
                       text-black text-2xl font-bold 
@@ -1061,7 +1135,7 @@ export default function Home() {
               </div>
               
               {/* Denomination Options */}
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-4 gap-4 mt-4">
                 {depositToken &&
                   Object.entries(poolInfo[depositToken]).map(([value, option]) => (
                     <button
@@ -1134,7 +1208,7 @@ export default function Home() {
 
                 {/* Nullifier Info Message */}
                 <div className="mb-6 text-black font-bold">
-                  <p className="mb-2">This NULLIFIER is REQUIRED to WITHDRAW and request gas for your deposit. Click below if you wish to save your nullifier in a text file.</p>
+                  <p className="mb-2">This NULLIFIER is REQUIRED to WITHDRAW your deposit. Click below if you wish to save your nullifier in a text file.</p>
                 </div>
 
                 {/* Backup Nullifier Button */}
@@ -1181,12 +1255,12 @@ export default function Home() {
           )}
 
 
-          {/* Request Gas Content */}
-          {activeTab === 'requestGas' && (
+          {/* Request Withdraw Content */}
+          {activeTab === 'requestWithdraw' && (
             <div className="space-y-6">
 
               {/* Ring Loader */}
-              {requestGasPending && (
+              {requestWithdrawPending && (
                 <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={300} speedMultiplier={0.5}/>
@@ -1199,9 +1273,9 @@ export default function Home() {
                 <label className="text-black text-lg font-bold block mb-1 px-2">Nullifier</label>
                 <input
                   type="text"
-                  value={requestGasNullifier}
-                  onChange={(e) => setRequestGasNullifier(e.target.value)}
-                  placeholder="ETH-1e15-12345678901234567890..."
+                  value={requestWithdrawNullifier}
+                  onChange={(e) => setRequestWithdrawNullifier(e.target.value)}
+                  placeholder="PLS-1e18-12345678901234567890..."
                   className="input-field"
                 />
               </div>
@@ -1211,158 +1285,71 @@ export default function Home() {
                 <label className="text-black text-lg font-bold block mb-1 px-2">Recipient</label>
                 <input
                   type="text"
-                  value={requestGasRecipient}
-                  onChange={(e) => setRequestGasRecipient(e.target.value)}
-                  placeholder="0x..."
-                  className="input-field"
-                />
-              </div>
-
-              {/* Checkbox Confirmation */}
-              <div className="flex items-center mb-6 relative group">
-                <input 
-                  type="checkbox" 
-                  id="publishPrivately" 
-                  className="mr-2"
-                  checked={publishPrivately}
-                  onChange={(e) => setPublishPrivately(e.target.checked)}
-                  disabled={requestGasPending}
-                />
-                <label htmlFor="publishPrivately" className="text-black font-bold cursor-pointer">
-                  Publish proof privately?
-                </label>
-                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-400 rounded-xl text-black border-2 border-gray-900  p-2 w-128">
-                Publishing the proof privately saves it as a text file. If this box is unchecked, the proof is posted publicly on Telegram at `t.me/pulseinprivate` for anonymous relayers to fulfill. If your recipient address already has enough gas to withdraw, YOU CAN EARN THE RELAYER FEES YOURSELF by calling send gas from your recipient address.
-                </div>
-              </div>
-              
-              {/* Request Gas Button */}
-              <div className="pt-4">
-                <button
-                  onClick={requestGas}
-                  disabled={!requestGasNullifier || !requestGasRecipient || requestGasPending}
-                  className="button"
-                >
-                  Request Gas
-                </button>
-              </div>
-            </div>
-          )}
-          
-
-          {/* Send Gas Content */}
-          {activeTab === 'sendGas' && (
-            <div className="space-y-6">
-
-              {/* Ring Loader */}
-              {sendGasPending && (
-                <div className="ringloader">
-                  <div>
-                    <RingLoader color="#4d004d" size={300} speedMultiplier={0.5}/>
-                  </div>
-                </div>
-              )}
-
-              {/* Proof Points */}
-              <div>
-                <label className="text-black font-bold block mb-1 px-2">pA</label>
-                <input
-                  type="text"
-                  value={pA}
-                  onChange={(e) => set_pA(e.target.value)}
-                  placeholder="1234, 5678"
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="text-black font-bold block mb-1 px-2">pB</label>
-                <input
-                  type="text"
-                  value={pB}
-                  onChange={(e) => set_pB(e.target.value)}
-                  placeholder="6969, 1234, 1337, 9876"
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="text-black font-bold block mb-1 px-2">pC</label>
-                <input
-                  type="text"
-                  value={pC}
-                  onChange={(e) => set_pC(e.target.value)}
-                  placeholder="9876, 5432"
-                  className="input-field"
-                />
-              </div>
-
-              {/* Public Signals */}
-              <div>
-                <label className="text-black font-bold block mb-1 px-2">Recipient Address</label>
-                <input
-                  type="text"
-                  value={sendGasRecipient}
-                  onChange={(e) => setSendGasRecipient(e.target.value)}
-                  placeholder="0x..."
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="text-black font-bold block mb-1 px-2">Nullifier Hash</label>
-                <input
-                  type="text"
-                  value={sendGasNullifierHash}
-                  onChange={(e) => setSendGasNullifierHash(e.target.value)}
-                  placeholder="0x..."
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="text-black font-bold block mb-1 px-2">Root</label>
-                <input
-                  type="text"
-                  value={sendGasRoot}
-                  onChange={(e) => setSendGasRoot(e.target.value)}
+                  value={requestWithdrawRecipient}
+                  onChange={(e) => setRequestWithdrawRecipient(e.target.value)}
                   placeholder="0x..."
                   className="input-field"
                 />
               </div>
               
-              {/* Pool Address Input */}
+              {/* Gas Input */}
               <div>
-                <label className="text-black font-bold block mb-1 px-2">Pool Address</label>
+                <label className="text-black text-lg font-bold block mb-1 px-2">Gas (PLS)</label>
                 <input
-                  type="text"
-                  value={sendGasPoolAddress}
-                  onChange={(e) => setSendGasPoolAddress(e.target.value)}
-                  placeholder="0x..."
+                  type="number"
+                  min="0"
+                  max="1000000000"
+                  step="1"
+                  value={requestWithdrawGas}
+                  onChange={(e) => setRequestWithdrawGas(e.target.value)}
+                  placeholder="20000"
                   className="input-field"
                 />
               </div>
 
-              {/* Send Gas Button */}
-              <div className="pt-4">
+              {/* Fee Input */}
+              <div>
+                <label className="text-black text-lg font-bold block mb-1 px-2">Fee (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  value={requestWithdrawFee}
+                  onChange={(e) => setRequestWithdrawFee(e.target.value)}
+                  placeholder="0.30"
+                  className="input-field"
+                />
+              </div>
+
+              <p className="text-black font-bold">Clicking "Request Withdraw" sends your public proof data to <a href="https://t.me/pulseinprivate" target="_blank" className="text-sky-900 underline"> t.me/pulseinprivate</a> where relayers listen to withdraw your deposit for you. If your fee offer is too small, they may choose to ignore your request. Consider looking at <a href="https://pip-1.gitbook.io/pip-docs/request-withdraw#gas-and-fee" target="_blank" className="text-sky-900 underline"> recommended fee values</a> in the docs.</p>
+
+              {/* Request Withdraw Button */}
+              <div className="pt-4 relative">
                 <button
-                  onClick={sendGas}
-                  disabled={!pA || !pB || !pC || !sendGasRecipient || !sendGasNullifierHash || !sendGasRoot || !sendGasPoolAddress || sendGasPending}
-                  className="button"
+                  onClick={requestWithdraw}
+                  disabled={
+                    !requestWithdrawNullifier || 
+                    !requestWithdrawRecipient || 
+                    !requestWithdrawGas || 
+                    !requestWithdrawFee || 
+                    requestWithdrawPending
+                  }
+                  className="button relative group"
                 >
-                  Send Gas
+                  Request Withdraw
                 </button>
               </div>
             </div>
           )}
 
 
-          {/* Withdraw Content */}
-          {activeTab === 'withdraw' && (
+          {/* User Withdraw Content */}
+          {activeTab === 'userWithdraw' && (
             <div className="space-y-6">
 
               {/* Ring Loader */}
-              {withdrawPending && (
+              {userWithdrawPending && (
                 <div className="ringloader">
                   <div>
                     <RingLoader color="#4d004d" size={250} speedMultiplier={0.5}/>
@@ -1375,9 +1362,9 @@ export default function Home() {
                 <label className="text-black text-lg font-bold block mb-1 px-2">Nullifier</label>
                 <input
                   type="text"
-                  value={withdrawNullifier}
-                  onChange={(e) => setWithdrawNullifier(e.target.value)}
-                  placeholder="ETH-1e15-12345678901234567890..."
+                  value={userWithdrawNullifier}
+                  onChange={(e) => setUserWithdrawNullifier(e.target.value)}
+                  placeholder="PLS-1e18-12345678901234567890..."
                   className="input-field"
                 />
               </div>
@@ -1387,18 +1374,133 @@ export default function Home() {
                 <label className="text-black text-lg font-bold block mb-1 px-2">Recipient</label>
                 <input
                   type="text"
-                  value={withdrawRecipient}
-                  onChange={(e) => setWithdrawRecipient(e.target.value)}
+                  value={userWithdrawRecipient}
+                  onChange={(e) => setUserWithdrawRecipient(e.target.value)}
                   placeholder="0x..."
                   className="input-field"
                 />
               </div>
               
-              {/* Withdraw Button */}
+              {/* User Withdraw Button */}
               <div className="pt-4">
                 <button
-                  onClick={withdraw}
-                  disabled={!withdrawNullifier || !withdrawRecipient || withdrawPending}
+                  onClick={userWithdraw}
+                  disabled={!userWithdrawNullifier || !userWithdrawRecipient || userWithdrawPending}
+                  className="button"
+                >
+                  Execute Withdraw
+                </button>
+              </div>
+            </div>
+          )}          
+
+          {/* Relayer Withdraw Content */}
+          {activeTab === 'relayerWithdraw' && (
+            <div className="space-y-6">
+
+              {/* Ring Loader */}
+              {relayerWithdrawPending && (
+                <div className="ringloader">
+                  <div>
+                    <RingLoader color="#4d004d" size={300} speedMultiplier={0.5}/>
+                  </div>
+                </div>
+              )}
+
+              {/* Proof */}
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Proof</label>
+                <input
+                  type="text"
+                  value={proof}
+                  onChange={(e) => setProof(e.target.value)}
+                  placeholder="1234, 5678, ..., 9012"
+                  className="input-field"
+                />
+              </div>
+
+              {/* Public Signals */}
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Recipient Address</label>
+                <input
+                  type="text"
+                  value={relayerWithdrawRecipient}
+                  onChange={(e) => setRelayerWithdrawRecipient(e.target.value)}
+                  placeholder="0x..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Gas (Wei)</label>
+                <input
+                  type="text"
+                  value={relayerWithdrawGas}
+                  onChange={(e) => setRelayerWithdrawGas(e.target.value)}
+                  placeholder="69690000000000000000..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Fee (Basis Points)</label>
+                <input
+                  type="text"
+                  value={relayerWithdrawFee}
+                  onChange={(e) => setRelayerWithdrawFee(e.target.value)}
+                  placeholder="42..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Nullifier Hash</label>
+                <input
+                  type="text"
+                  value={relayerWithdrawNullifierHash}
+                  onChange={(e) => setRelayerWithdrawNullifierHash(e.target.value)}
+                  placeholder="0x..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Root</label>
+                <input
+                  type="text"
+                  value={relayerWithdrawRoot}
+                  onChange={(e) => setRelayerWithdrawRoot(e.target.value)}
+                  placeholder="0x..."
+                  className="input-field"
+                />
+              </div>
+              
+              {/* Pool Address Input */}
+              <div>
+                <label className="text-black font-bold block mb-1 px-2">Pool Address</label>
+                <input
+                  type="text"
+                  value={relayerWithdrawPoolAddress}
+                  onChange={(e) => setRelayerWithdrawPoolAddress(e.target.value)}
+                  placeholder="0x..."
+                  className="input-field"
+                />
+              </div>
+
+              {/* Relayer Withdraw Button */}
+              <div className="pt-4">
+                <button
+                  onClick={relayerWithdraw}
+                  disabled={
+                    !proof || 
+                    !relayerWithdrawRecipient || 
+                    !relayerWithdrawGas || 
+                    !relayerWithdrawFee || 
+                    !relayerWithdrawNullifierHash || 
+                    !relayerWithdrawRoot || 
+                    !relayerWithdrawPoolAddress ||
+                    relayerWithdrawPending
+                  }
                   className="button"
                 >
                   Execute Withdraw
@@ -1421,14 +1523,17 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Nullifier Input */}
+              {/* Tree Index Input */}
               <div>
                 <label className="text-black text-lg font-bold block mb-1 px-2">Tree Index</label>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
+                  max="1000000000"
+                  step="1"
                   value={anonTreeIndex}
                   onChange={(e) => setAnonTreeIndex(e.target.value)}
-                  placeholder="69"
+                  placeholder="0"
                   className="input-field"
                 />
               </div>

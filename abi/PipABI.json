@@ -5,7 +5,7 @@
       {
         "name": "_verifier",
         "type": "address",
-        "internalType": "contract IGroth16Verifier"
+        "internalType": "contract IPlonkVerifierPPOT"
       },
       {
         "name": "_denomination",
@@ -23,19 +23,6 @@
   {
     "type": "function",
     "name": "FIELD_SIZE",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "GAS",
     "inputs": [],
     "outputs": [
       {
@@ -74,19 +61,6 @@
   },
   {
     "type": "function",
-    "name": "RELAYER_FEE",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "ZERO_VALUE",
     "inputs": [],
     "outputs": [
@@ -104,25 +78,8 @@
     "inputs": [
       {
         "name": "p",
-        "type": "tuple",
-        "internalType": "struct Pip.ECPoints",
-        "components": [
-          {
-            "name": "pA",
-            "type": "uint256[2]",
-            "internalType": "uint256[2]"
-          },
-          {
-            "name": "pB",
-            "type": "uint256[2][2]",
-            "internalType": "uint256[2][2]"
-          },
-          {
-            "name": "pC",
-            "type": "uint256[2]",
-            "internalType": "uint256[2]"
-          }
-        ]
+        "type": "uint256[24]",
+        "internalType": "uint256[24]"
       },
       {
         "name": "s",
@@ -135,6 +92,16 @@
             "internalType": "address payable"
           },
           {
+            "name": "gas",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "fee",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
             "name": "nullifierHash",
             "type": "bytes32",
             "internalType": "bytes32"
@@ -145,11 +112,6 @@
             "internalType": "bytes32"
           }
         ]
-      },
-      {
-        "name": "proofType",
-        "type": "uint8",
-        "internalType": "enum Pip.ProofType"
       }
     ],
     "outputs": [],
@@ -221,11 +183,6 @@
         "name": "",
         "type": "bytes32",
         "internalType": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "uint8",
-        "internalType": "enum Pip.ProofType"
       }
     ],
     "outputs": [
@@ -334,58 +291,6 @@
   },
   {
     "type": "function",
-    "name": "sendGas",
-    "inputs": [
-      {
-        "name": "p",
-        "type": "tuple",
-        "internalType": "struct Pip.ECPoints",
-        "components": [
-          {
-            "name": "pA",
-            "type": "uint256[2]",
-            "internalType": "uint256[2]"
-          },
-          {
-            "name": "pB",
-            "type": "uint256[2][2]",
-            "internalType": "uint256[2][2]"
-          },
-          {
-            "name": "pC",
-            "type": "uint256[2]",
-            "internalType": "uint256[2]"
-          }
-        ]
-      },
-      {
-        "name": "s",
-        "type": "tuple",
-        "internalType": "struct Pip.PubSignals",
-        "components": [
-          {
-            "name": "recipient",
-            "type": "address",
-            "internalType": "address payable"
-          },
-          {
-            "name": "nullifierHash",
-            "type": "bytes32",
-            "internalType": "bytes32"
-          },
-          {
-            "name": "root",
-            "type": "bytes32",
-            "internalType": "bytes32"
-          }
-        ]
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "siblingNodes",
     "inputs": [
       {
@@ -450,7 +355,7 @@
       {
         "name": "",
         "type": "address",
-        "internalType": "contract IGroth16Verifier"
+        "internalType": "contract IPlonkVerifierPPOT"
       }
     ],
     "stateMutability": "view"
@@ -461,25 +366,8 @@
     "inputs": [
       {
         "name": "p",
-        "type": "tuple",
-        "internalType": "struct Pip.ECPoints",
-        "components": [
-          {
-            "name": "pA",
-            "type": "uint256[2]",
-            "internalType": "uint256[2]"
-          },
-          {
-            "name": "pB",
-            "type": "uint256[2][2]",
-            "internalType": "uint256[2][2]"
-          },
-          {
-            "name": "pC",
-            "type": "uint256[2]",
-            "internalType": "uint256[2]"
-          }
-        ]
+        "type": "uint256[24]",
+        "internalType": "uint256[24]"
       },
       {
         "name": "s",
@@ -490,6 +378,16 @@
             "name": "recipient",
             "type": "address",
             "internalType": "address payable"
+          },
+          {
+            "name": "gas",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "fee",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
             "name": "nullifierHash",
@@ -505,7 +403,7 @@
       }
     ],
     "outputs": [],
-    "stateMutability": "nonpayable"
+    "stateMutability": "payable"
   },
   {
     "type": "function",
@@ -560,25 +458,6 @@
         "type": "bytes32",
         "indexed": false,
         "internalType": "bytes32"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "GasSent",
-    "inputs": [
-      {
-        "name": "recipient",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "relayer",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
       }
     ],
     "anonymous": false
@@ -649,7 +528,18 @@
   {
     "type": "error",
     "name": "CallFailed",
-    "inputs": []
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
   },
   {
     "type": "error",

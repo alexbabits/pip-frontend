@@ -1055,7 +1055,7 @@ export default function Home() {
 
   return (
     <main 
-      className="min-h-screen bg-cover bg-center bg-no-repeat px-4 text-white"
+      className="min-h-screen bg-cover bg-center bg-no-repeat px-4 text-white relative"
       style={{ backgroundImage: "url('/background.png')" }}
     >
       
@@ -1572,6 +1572,27 @@ export default function Home() {
           )}
 
         </div>
+      </div>
+
+      {/* Verifiable GitHub Commit Hash - Footer */}
+      <div className="absolute bottom-2 right-4 text-black font-bold">
+        <div className="flex flex-col items-end text-gray-300">
+          {process.env.NEXT_PUBLIC_COMMIT_HASH && (
+            <p>
+              <a href="https://github.com/alexbabits/pip-frontend" target="_blank" className="text-sky-900 underline">
+            {process.env.NEXT_PUBLIC_COMMIT_HASH.substring(0, 7)}</a>
+            </p>
+          )}
+
+        </div>
+      </div>
+
+      {/* Disclaimer - Footer */} 
+      <div className="absolute bottom-2 left-2 text-black font-bold"> 
+        <div className="flex flex-col items-start text-gray-300"> 
+          <p>PIP smart contracts have been <a href="https://github.com/alexbabits/pip/tree/master/audits" target="_blank" className="text-sky-900 underline">audited</a>.</p> 
+          <p>Regardless, please use at your own risk.</p> 
+        </div> 
       </div>
 
     </main>

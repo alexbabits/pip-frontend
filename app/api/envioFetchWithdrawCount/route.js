@@ -4,7 +4,7 @@ export async function POST(request) {
 
     const { treeIndex, poolAddress } = await request.json();
     const envioID = process.env.ENVIO_ID;
-    const LIMIT = 3; // 1000 in prod
+    const LIMIT = 1000; // 1000 in prod
     let allWithdraws = [];
     let hasMore = true;
     let offset = 0;

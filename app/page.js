@@ -67,34 +67,34 @@ export default function Home() {
 
   const poolInfo = {
     PLS: {
-      "1e18": { label: "1", address: "0xBa851Bb07a6D9F11310821a045B01c0b45Ee9B2b", value: 1000000000000000000n },
-      "10e18": { label: "10", address: "0x65295365012046777A879C7B47f96c2164c067D3", value: 10000000000000000000n },
-      "100e18": { label: "100", address: "0xA973081C228E6dE666E7F2F0e6530D564b65c7E7", value: 100000000000000000000n }, 
-      "1000e18": { label: "1K", address: "0x2A56ac08BEC952cB182Fc933a081dC659c726289", value: 1000000000000000000000n }
+      "1e18": { label: "1", address: "0xd70be32c0443C0D6A615024D2A8fa28B8f98EF70", value: 1000000000000000000n },
+      "10e18": { label: "10", address: "0xNAN", value: 10000000000000000000n },
+      "100e18": { label: "100", address: "0xNAN", value: 100000000000000000000n }, 
+      "1000e18": { label: "1K", address: "0x78Ad604F0BCB61Ef683e13C3fA7D87F5dA3aa953", value: 1000000000000000000000n }
     },
     PLSX: {
-      "1e18": { label: "1", address: "0x2af0dEfe6Ea7850357470FEc46030653DFec110B", value: 1000000000000000000n },
-      "10e18": { label: "10", address: "0x2797c507F8400af832943eA6e1Fa7491D35f8836", value: 10000000000000000000n },
-      "20e18": { label: "20", address: "0x63D74140D70F27F8326E8f5e7aEf67bc3a5405BF", value: 20000000000000000000n },
-      "100e18": { label: "100", address: "0x556Ab283a451F1C9e8B3A20B9A3c22Fb217a1691", value: 100000000000000000000n }
+      "1e18": { label: "1", address: "0xab54D57BDb3b9f76aFD3516b548331e9B57a7EA6", value: 1000000000000000000n },
+      "10e18": { label: "10", address: "0xNAN", value: 10000000000000000000n },
+      "20e18": { label: "20", address: "0xNAN", value: 20000000000000000000n },
+      "100e18": { label: "100", address: "0xf95ACA5A28523cC9181e8aB7E6601F8626a033B2", value: 100000000000000000000n }
     },
     PHEX: {
-      "1e7": { label: "0.1", address: "0xbc114f72b70CaE713A1b2b7D961cF67eDf5e9892", value: 10000000n },
-      "1e8": { label: "1", address: "0x2bbf6Ab97b3f4597c81903094AE0be45a441CCCb", value: 100000000n },
-      "1e9": { label: "10", address: "0x1C10D270F93C173B74EAEad96Ef5ba871A199e35", value: 1000000000n },
-      "2e9": { label: "20", address: "0x1eF7A3001BC8ce9A194649f71B43C195DAA57E10", value: 2000000000n }
+      "1e7": { label: "0.1", address: "0xNAN", value: 10000000n },
+      "1e8": { label: "1", address: "0xNAN", value: 100000000n },
+      "1e9": { label: "10", address: "0xNAN", value: 1000000000n },
+      "2e9": { label: "20", address: "0xNAN", value: 2000000000n }
     },
     EHEX: {
-      "1e8": { label: "1", address: "0x3A82B734BFA22Ae380B158efc0Cf2a53bAd885a8", value: 100000000n },
-      "1e9": { label: "10", address: "0xB5F6D4C2dE81d037c3686E2654a9DAC4507d6a11", value: 1000000000n },
-      "2e9": { label: "20", address: "0x8798B89a9b8e0Ea4C7c141517618Eca8CF8F0216", value: 2000000000n },
-      "1e10": { label: "100", address: "0xA47F4EFd0E10379e59b7aDc0de86Ffb2b5230E26", value: 10000000000n }
+      "1e8": { label: "1", address: "0xfBB5Dcba8a198B3e8cc12d1AE73d1B92f0d3b355", value: 100000000n },
+      "1e9": { label: "10", address: "0xNAN", value: 1000000000n },
+      "2e9": { label: "20", address: "0xNAN", value: 2000000000n },
+      "1e10": { label: "100", address: "0xNAN", value: 10000000000n }
     },
     INC: {
-      "1e16": { label: "0.01", address: "0xe5aA2D1101c7cC67bB13e27b3AfF234B537268a0", value: 10000000000000000n },
-      "1e17": { label: "0.1", address: "0x953f36CF20093685953d65B32378af53CB5965a5", value: 100000000000000000n },
-      "2e17": { label: "0.2", address: "0x41aC7fb22432a09FF35bc08e659D01b0821973B7", value: 200000000000000000n },
-      "1e18": { label: "1", address: "0x25325c05f78975F28D15fBd7354a9b6849e45445", value: 1000000000000000000n }
+      "1e16": { label: "0.01", address: "0x8904B6B17D0664B30608bA2b2a024cdf2745CBB3", value: 10000000000000000n },
+      "1e17": { label: "0.1", address: "0xNAN", value: 100000000000000000n },
+      "2e17": { label: "0.2", address: "0xNAN", value: 200000000000000000n },
+      "1e18": { label: "1", address: "0xNAN", value: 1000000000000000000n }
     }
   };
 
@@ -322,10 +322,15 @@ export default function Home() {
     // 14. Ensure proof has not already been used.
     try {
       const pool = new ethers.Contract(poolAddress, PipABI, provider);
-      await pool.checkProof(formattedProof, formattedPublicSignals);
-      console.log("Proof is valid. Root from proof matched. Proof hasn't been used to send gas yet. Publishing proof...");
+      const isValid = await pool.checkProof(formattedProof, formattedPublicSignals);
+      if (!isValid) {
+        toast(`Proof is invalid.\n1. NullifierHash from proof already used\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 15000, "#ffadb7");
+        setRequestWithdrawPending(false);
+        return;
+      }
+      console.log("Proof is valid. Root from proof matched. Proof hasn't been used to withdraw yet. Publishing proof...");
     } catch (error) {
-      toast(`checkProof call failed.\n1. NullifierHash from proof already used\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 15000, "#ffadb7");
+      toast(`checkProof call failed.`, 3000, "#ffadb7");
       setRequestWithdrawPending(false);
       return;
     }
@@ -468,10 +473,15 @@ export default function Home() {
     const pool = new ethers.Contract(poolAddress, PipABI, signer);
 
     try {
-      await pool.checkProof(formattedProof, formattedPublicSignals);
+      const isValid = await pool.checkProof(formattedProof, formattedPublicSignals);
+      if (!isValid) {
+        toast(`Proof is invalid.\n1. NullifierHash from proof already used\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 15000, "#ffadb7");
+        setUserWithdrawPending(false);
+        return;
+      }
       console.log("Proof is valid. Root from proof matched. Proof hasn't been used to withdraw. Withdrawing...");
     } catch (error) {
-      toast(`checkProof call failed.\n1. NullifierHash from proof already used\n2. Root from the proof doesn't match any roots in the pool\n3. Proof passed snarkjs verification but not solidity verification`, 15000, "#ffadb7");
+      toast(`checkProof call failed.`, 3000, "#ffadb7");
       setUserWithdrawPending(false);
       return;
     }
@@ -541,9 +551,15 @@ export default function Home() {
     // 5. Ensure proof is correct and the nullifierHash hasn't been used yet
     setRelayerWithdrawPending(true);
     try {
-      await pool.checkProof(formattedProof, formattedPublicSignals);
+      const isValid = await pool.checkProof(formattedProof, formattedPublicSignals);
+      if (!isValid) {
+        toast(`Solidity checkProof failed.\n1. Incorrect proof/signal inputs\n2. Nullifier Hash from proof already used.`, 10000, "#ffadb7");
+        setRelayerWithdrawPending(false);
+        return;
+      }
+      console.log("Proof is valid. Root from proof matched. Proof hasn't been used to withdraw. Withdrawing...");
     } catch (error) {
-      toast("Solidity checkProof failed.\n1. Incorrect proof/signal inputs\n2. Nullifier Hash from proof already used.", 6000, "#ffadb7");
+      toast("checkProof call failed.", 3000, "#ffadb7");
       setRelayerWithdrawPending(false);
       return;
     }
@@ -1257,7 +1273,7 @@ export default function Home() {
 
           {/* Request Withdraw Content */}
           {activeTab === 'requestWithdraw' && (
-            <div className="space-y-6">
+            <div className="space-y-6 max-h-[400px] overflow-y-auto p-4">
 
               {/* Ring Loader */}
               {requestWithdrawPending && (
@@ -1396,7 +1412,7 @@ export default function Home() {
 
           {/* Relayer Withdraw Content */}
           {activeTab === 'relayerWithdraw' && (
-            <div className="space-y-6">
+            <div className="space-y-6 max-h-[400px] overflow-y-auto p-4">
 
               {/* Ring Loader */}
               {relayerWithdrawPending && (

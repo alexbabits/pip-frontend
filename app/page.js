@@ -559,6 +559,7 @@ export default function Home() {
       }
       console.log("Proof is valid. Root from proof matched. Proof hasn't been used to withdraw. Withdrawing...");
     } catch (error) {
+      console.log(error);
       toast("checkProof call failed.", 3000, "#ffadb7");
       setRelayerWithdrawPending(false);
       return;
@@ -898,12 +899,20 @@ export default function Home() {
 
   const sendTelegramMessage = async (proof, pubSignals, poolAddress) => {
     try {
-      const message = `\nPROOF\n\n${proof}\n\nPUBLIC SIGNALS\nRecipient: ${pubSignals.recipient}\nGas (Wei): ${pubSignals.gas}\nFee (Basis Points): ${pubSignals.fee}\nNullifier Hash: ${pubSignals.nullifierHash}\nRoot: ${pubSignals.root}\nPool Address: ${poolAddress}`;
-  
+      const message = {
+        proof: proof,
+        recipient: pubSignals.recipient,
+        gas: pubSignals.gas,
+        fee: pubSignals.fee,
+        nullifierHash: pubSignals.nullifierHash,
+        root: pubSignals.root,
+        poolAddress: poolAddress
+      };
+
       await fetch('/api/telegram', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message})
+        body: JSON.stringify({ message: JSON.stringify(message) })
       });
     } catch (error) {
       setRequestWithdrawPending(false);

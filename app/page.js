@@ -235,7 +235,7 @@ export default function Home() {
     // 4. Compute leaf from nullifier
     const _leaf = await computeLeaf(nullifierBigInt, poseidon);
   
-    // 5. Query Envio Indexer to get the leaf index and tree index for this leaf's Deposit event
+    // 5. Use Ethers to get the leaf index and tree index for this leaf's Deposit event
     const indices = await fetchIndicesForLeaf(_leaf, poolAddress);
     if (!indices) {
       setRequestWithdrawPending(false);
@@ -248,7 +248,7 @@ export default function Home() {
     const nullifierHash = await computeNullifierHash(nullifierBigInt, leafIndex, poseidon);
     const pathIndices = computePathIndices(leafIndex);
 
-    // 7. Query Envio Indexer again to get all the leaves of the tree for the specific pool
+    // 7. Use Ethers again to get all the leaves of the tree for the specific pool
     const leaves = await fetchLeavesForTree(treeIndex, poolAddress);
     if (!leaves) {
       setRequestWithdrawPending(false);
@@ -385,7 +385,7 @@ export default function Home() {
     // 4. Compute leaf from nullifier
     const _leaf = await computeLeaf(nullifierBigInt, poseidon);
 
-    // 5. Query Envio Indexer to get the leaf index and tree index for this leaf's Deposit event
+    // 5. Use Ethers to get the leaf index and tree index for this leaf's Deposit event
     const indices = await fetchIndicesForLeaf(_leaf, poolAddress);
     if (!indices) {
       setUserWithdrawPending(false);
@@ -398,7 +398,7 @@ export default function Home() {
     const nullifierHash = await computeNullifierHash(nullifierBigInt, leafIndex, poseidon);
     const pathIndices = computePathIndices(leafIndex);
 
-    // 7. Query Envio Indexer again to get all the leaves of the tree for the specific pool
+    // 7. Use Ethers again to get all the leaves of the tree for the specific pool
     const leaves = await fetchLeavesForTree(treeIndex, poolAddress);
     if (!leaves) {
       setUserWithdrawPending(false);
@@ -510,9 +510,13 @@ export default function Home() {
 
     // 1. Format proof and public signals
     let formattedProof;
+
     try {
-      // Parse the proof string pasted from telegram public proof into an array of BigInts
-      formattedProof = proof.split(',').map(val => BigInt(val.trim()));
+      // Parse the proof array pasted from telegram public proof into an array of BigInts
+      formattedProof = proof
+      .replace(/[\[\]"]/g, '') // Remove any brackets/quotes
+      .split(',')
+      .map(val => BigInt(val.trim()));
       
       // Validate we have exactly 24 proof elements
       if (formattedProof.length !== 24) {
@@ -848,12 +852,12 @@ export default function Home() {
 
 
   // ==========================
-  // ROUTES (Envio & Telegram)
+  // ROUTES (Ethers & Telegram)
   // ==========================
 
   const fetchIndicesForLeaf = async (_leaf, _poolAddress) => {
     try {
-      const response = await fetch('/api/envioFetchIndices', {
+      const response = await fetch('/api/ethersFetchIndices', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ leaf: _leaf, poolAddress: _poolAddress})
@@ -876,7 +880,7 @@ export default function Home() {
 
   const fetchLeavesForTree = async (_treeIndex, _poolAddress) => {
     try {
-      const response = await fetch('/api/envioFetchLeaves', {
+      const response = await fetch('/api/ethersFetchLeaves', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ treeIndex: _treeIndex.toString(), poolAddress: _poolAddress })
@@ -939,14 +943,16 @@ export default function Home() {
     setAnonSetPending(true);
     let deposits = 0;
     let withdraws = 0;
+
     try {
-      // Deposits
-      const depositResponse = await fetch('/api/envioFetchDepositCount', {
+        
+      // Fetch Deposits
+      const depositResponse = await fetch('/api/ethersFetchDepositCount', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ treeIndex: anonTreeIndex, poolAddress: anonPoolAddress})
+        body: JSON.stringify({ treeIndex: anonTreeIndex.toString(), poolAddress: anonPoolAddress })
       });
-  
+
       const depositResult = await depositResponse.json();
       
       if (depositResult.success) {
@@ -956,13 +962,13 @@ export default function Home() {
         toast(`${depositResult.error}`, 6000, "#ffadb7");
       }
 
-      // Withdraws
-      const withdrawResponse = await fetch('/api/envioFetchWithdrawCount', {
+      // Fetch Withdraws
+      const withdrawResponse = await fetch('/api/ethersFetchWithdrawCount', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ treeIndex: anonTreeIndex, poolAddress: anonPoolAddress})
+        body: JSON.stringify({ treeIndex: anonTreeIndex.toString(), poolAddress: anonPoolAddress })
       });
-  
+
       const withdrawResult = await withdrawResponse.json();
       
       if (withdrawResult.success) {

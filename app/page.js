@@ -511,9 +511,13 @@ export default function Home() {
     // 1. Format proof and public signals
     let formattedProof;
     try {
-      // Parse the proof string pasted from telegram public proof into an array of BigInts
-      formattedProof = proof.split(',').map(val => BigInt(val.trim()));
-      
+
+      // Parse the proof array pasted from telegram public proof into an array of BigInts
+      formattedProof = proof
+      .replace(/[\[\]"]/g, '') // Remove any brackets/quotes
+      .split(',')
+      .map(val => BigInt(val.trim()));
+
       // Validate we have exactly 24 proof elements
       if (formattedProof.length !== 24) {
         toast("Incorrectly formatted proof. Expected 24 values.", 3000, "#ffadb7");

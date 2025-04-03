@@ -1614,7 +1614,7 @@ export default function Home() {
             {process.env.NEXT_PUBLIC_COMMIT_HASH.substring(0, 7)}</a>
             </p>
           )}
-
+          <p className="text-xs text-gray-300">Donate: 0x0BfD912ddE5a48eD3C5BcBAD2c9cCF694584B612</p>
         </div>
       </div>
 

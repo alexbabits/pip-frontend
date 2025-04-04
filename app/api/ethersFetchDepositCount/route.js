@@ -7,20 +7,12 @@ export async function POST(request) {
 
     const { treeIndex, poolAddress } = await request.json();
 
-    if (!process.env.RPC_URL) {
-      throw new Error("RPC_URL environment variable is not defined");
-    }
-    await new Promise(resolve => setTimeout(resolve, 500));
-    console.log(process.env.RPC_URL);
-
     // Instantiate provider and pool
     const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
-
-    await new Promise(resolve => setTimeout(resolve, 500));
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
 
     // Set up block range
-    const startBlock = 23000000; // Approx block of pool deployments
+    const startBlock = 23120454; // First pool deployed at 
     const endBlock = await provider.getBlockNumber();
     const CHUNK_SIZE = 100000000; // 100M (don't need chunksize, placeholder incase we ever do.)
 

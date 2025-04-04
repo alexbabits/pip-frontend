@@ -8,11 +8,11 @@ export async function POST(request) {
     const { leaf, poolAddress } = await request.json();
     
     // Instantiate provider and pool
-    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, 369, {staticNetwork: true} );
+    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
     
     // Set up block range
-    const startBlock = 23000000; // Approx block of pool deployments
+    const startBlock = 23120454; // First pool deployed at 
     const endBlock = await provider.getBlockNumber();
     const CHUNK_SIZE = 100000000; // Large value for a single chunk
     

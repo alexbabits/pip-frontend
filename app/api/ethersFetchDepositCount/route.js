@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, Network } from 'ethers';
 import PipABI from "../../../abi/PipABI.json";
 
 export async function POST(request) {
@@ -8,14 +8,15 @@ export async function POST(request) {
     const { treeIndex, poolAddress } = await request.json();
 
     // Instantiate provider and pool
-    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, 369);
+    const network = new Network("pulsechain", 369);
+    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, network, {staticNetwork: true} );
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
 
     // Set up block range
     const startBlock = 23000000; // Approx block of pool deployments
     const endBlock = await provider.getBlockNumber();
     const CHUNK_SIZE = 100000000; // 100M (don't need chunksize, placeholder incase we ever do.)
-    console.log("hello4");
+
     let depositCount = 0;
     
     // Query events in chunks to avoid RPC limitations

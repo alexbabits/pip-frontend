@@ -9,7 +9,7 @@ export async function POST(request) {
 
     // Instantiate provider and pool
     const network = new Network("pulsechain", 369);
-    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, network, {staticNetwork: true} );
+    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, network, {staticNetwork: network} );
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
 
     // Set up block range

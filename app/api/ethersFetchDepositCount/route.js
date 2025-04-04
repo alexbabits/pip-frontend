@@ -4,15 +4,13 @@ import PipABI from "../../../abi/PipABI.json";
 export async function POST(request) {
 
   try {
-    console.log("hello");
+
     const { treeIndex, poolAddress } = await request.json();
-    console.log("hello2");
-    console.log(process.env.TEST_VAR);
-    console.log(process.env.TEST_VAR_2);
+
     // Instantiate provider and pool
-    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, 369);
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
-    console.log("hello3");
+
     // Set up block range
     const startBlock = 23000000; // Approx block of pool deployments
     const endBlock = await provider.getBlockNumber();

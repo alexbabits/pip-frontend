@@ -1,4 +1,4 @@
-import { ethers, Network } from 'ethers';
+import { ethers } from 'ethers';
 import PipABI from "../../../abi/PipABI.json";
 
 export async function POST(request) {
@@ -8,8 +8,7 @@ export async function POST(request) {
     const { treeIndex, poolAddress } = await request.json();
 
     // Instantiate provider and pool
-    const network = new Network("pulsechain", 369);
-    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, network, {staticNetwork: network} );
+    const provider = new ethers.JsonRpcProvider(process.env.RPC_URL, 369, {staticNetwork: true} );
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
 
     // Set up block range

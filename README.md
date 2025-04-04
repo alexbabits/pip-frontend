@@ -1,5 +1,5 @@
 # pip frontend
-* pulseinprivate.com
+* https://pulseinprivate.com
 
 ### Docs
 * https://pip-1.gitbook.io/pip-docs

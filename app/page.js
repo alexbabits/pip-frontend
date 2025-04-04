@@ -67,34 +67,34 @@ export default function Home() {
 
   const poolInfo = {
     PLS: {
-      "1e18": { label: "1", address: "0xd70be32c0443C0D6A615024D2A8fa28B8f98EF70", value: 1000000000000000000n },
-      "10e18": { label: "10", address: "0xNAN", value: 10000000000000000000n },
-      "100e18": { label: "100", address: "0xNAN", value: 100000000000000000000n }, 
-      "1000e18": { label: "1K", address: "0x78Ad604F0BCB61Ef683e13C3fA7D87F5dA3aa953", value: 1000000000000000000000n }
+      "10000000e18": { label: "10M", address: "0x487ab5De5e8bEC9cb593fA7B587503c52E451520", value: 10000000000000000000000000n },
+      "100000000e18": { label: "100M", address: "0x83953319D11F17dE24C89Cbfb580B69Ef3c3B9A6", value: 100000000000000000000000000n },
+      "300000000e18": { label: "300M", address: "0x9Cf56Cb9198321A4bdE35bd11973E32Ef1A047b4", value: 300000000000000000000000000n }, 
+      "1000000000e18": { label: "1B", address: "0xee1f3875Ec9A8d90bd47351E8509dbb4550BF4A7", value: 1000000000000000000000000000n }
     },
     PLSX: {
-      "1e18": { label: "1", address: "0xab54D57BDb3b9f76aFD3516b548331e9B57a7EA6", value: 1000000000000000000n },
-      "10e18": { label: "10", address: "0xNAN", value: 10000000000000000000n },
-      "20e18": { label: "20", address: "0xNAN", value: 20000000000000000000n },
-      "100e18": { label: "100", address: "0xf95ACA5A28523cC9181e8aB7E6601F8626a033B2", value: 100000000000000000000n }
+      "10000000e18": { label: "10M", address: "0x16ABdB6c69726a7a570265F0975ecb7f66Fed624", value: 10000000000000000000000000n },
+      "100000000e18": { label: "100M", address: "0xbFeFe59a8B0d52892F93841A97Bd90B3d39Af20C", value: 100000000000000000000000000n },
+      "300000000e18": { label: "300M", address: "0x691F31938EE3A1d7Bad242517d42Da4d16226b5f", value: 300000000000000000000000000n },
+      "1000000000e18": { label: "1B", address: "0x1aCb121E71E5468815147B3B2bdaCB2377052679", value: 1000000000000000000000000000n }
     },
     PHEX: {
-      "1e7": { label: "0.1", address: "0xNAN", value: 10000000n },
-      "1e8": { label: "1", address: "0xNAN", value: 100000000n },
-      "1e9": { label: "10", address: "0xNAN", value: 1000000000n },
-      "2e9": { label: "20", address: "0xNAN", value: 2000000000n }
+      "50000e8": { label: "50K", address: "0x017F40249a19bC39DB8FeaaD0164F724b52afaf5", value: 5000000000000n },
+      "500000e8": { label: "500K", address: "0xF67Bc6353D2bCfc73E3254e4F30D02Ad27450c86", value: 50000000000000n },
+      "1500000e8": { label: "1.5M", address: "0x1d8ce3380d189f2932c7Ae9C58489D34cc0335CD", value: 150000000000000n },
+      "5000000e8": { label: "5M", address: "0x8A4bdFEd5B5C63111Bf8432787199bCE71F47210", value: 500000000000000n }
     },
     EHEX: {
-      "1e8": { label: "1", address: "0xfBB5Dcba8a198B3e8cc12d1AE73d1B92f0d3b355", value: 100000000n },
-      "1e9": { label: "10", address: "0xNAN", value: 1000000000n },
-      "2e9": { label: "20", address: "0xNAN", value: 2000000000n },
-      "1e10": { label: "100", address: "0xNAN", value: 10000000000n }
+      "150000e8": { label: "150K", address: "0x8f4544b02D7e6DB7D625fAfa84C9211593A4B23f", value: 15000000000000n },
+      "1500000e8": { label: "1.5M", address: "0xE177b96c8e414F2C3e2048D7E0f1073544BA5555", value: 150000000000000n },
+      "5000000e8": { label: "5M", address: "0x77117957aD26F9b2D64bE93bF5b6d3d5D6fA0798", value: 500000000000000n },
+      "15000000e8": { label: "15M", address: "0xaf8FcD4de7dBA23ccEe64070D8874eAc4410E102", value: 1500000000000000n }
     },
     INC: {
-      "1e16": { label: "0.01", address: "0x8904B6B17D0664B30608bA2b2a024cdf2745CBB3", value: 10000000000000000n },
-      "1e17": { label: "0.1", address: "0xNAN", value: 100000000000000000n },
-      "2e17": { label: "0.2", address: "0xNAN", value: 200000000000000000n },
-      "1e18": { label: "1", address: "0xNAN", value: 1000000000000000000n }
+      "200e18": { label: "200", address: "0x1BA7bF077B0F8b6317CBB9264518E82A936FCce8", value: 200000000000000000000n },
+      "2000e18": { label: "2K", address: "0x12542E68E46012D3586B4561F2cc9dB3306fAE08", value: 2000000000000000000000n },
+      "6000e18": { label: "6K", address: "0x0468277a1DeA8Cd2e376D38F639978f610a754fe", value: 6000000000000000000000n },
+      "20000e18": { label: "20K", address: "0xeE261152ac9E0b1b5fcFa4777337B5E068FeD49b", value: 20000000000000000000000n }
     }
   };
 

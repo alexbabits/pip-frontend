@@ -8,7 +8,7 @@ export async function POST(request) {
     const { treeIndex, poolAddress } = await request.json();
 
     // Instantiate provider and pool
-    const provider = new ethers.JsonRpcProvider("https://rpc-pulsechain.g4mm4.io", {staticNetwork: true} );
+    const provider = new ethers.JsonRpcProvider("https://rpc-pulsechain.g4mm4.io");
     const pool = new ethers.Contract(poolAddress, PipABI, provider);
     //console.log("RPC_URL:", process.env.RPC_URL);
     // Set up block range
